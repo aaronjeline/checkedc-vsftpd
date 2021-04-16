@@ -1,15 +1,15 @@
 # Makefile for systems with GNU tools
-CC 	=	gcc
+CC 	=	clang
 INSTALL	=	install
 IFLAGS  = -idirafter dummyinc
-#CFLAGS = -g
+CFLAGS = -g -w -O0
 #CFLAGS	=	-O2 -fPIE -fstack-protector --param=ssp-buffer-size=4 \
 	-Wall -W -Wshadow -Werror -Wformat-security \
 	-D_FORTIFY_SOURCE=2 \
 	#-pedantic -Wconversion
 
 LIBS	=	`./vsf_findlibs.sh`
-LINK	=	-Wl,-s
+LINK	=	-Wl
 #LDFLAGS	=	-fPIE -pie -Wl,-z,relro -Wl,-z,now
 
 OBJS	=	main.o utility.o prelogin.o ftpcmdio.o postlogin.o privsock.o \
@@ -26,7 +26,7 @@ OBJS	=	main.o utility.o prelogin.o ftpcmdio.o postlogin.o privsock.o \
 	$(CC) -c $*.c $(CFLAGS) $(IFLAGS)
 
 vsftpd: $(OBJS) 
-	$(CC) -o vsftpd $(OBJS) $(LINK) $(LDFLAGS) $(LIBS)
+	$(CC) -g -o vsftpd $(OBJS) $(LINK) $(LDFLAGS) $(LIBS)
 
 install:
 	if [ -x /usr/local/sbin ]; then \
