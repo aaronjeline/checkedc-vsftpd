@@ -21,8 +21,7 @@ str_fileread(struct mystr* p_str, const char* p_filename, unsigned int maxsize)
 {
   int fd;
   int retval = 0;
-  filesize_t size;
-  char* p_sec_buf = 0;
+  struct secbuf sec_buf = {};
   struct vsf_sysutil_statbuf* p_stat = 0;
   /* In case we fail, make sure we return an empty string */
   str_empty(p_str);
@@ -34,27 +33,27 @@ str_fileread(struct mystr* p_str, const char* p_filename, unsigned int maxsize)
   vsf_sysutil_fstat(fd, &p_stat);
   if (vsf_sysutil_statbuf_is_regfile(p_stat))
   {
-    size = vsf_sysutil_statbuf_get_size(p_stat);
-    if (size > maxsize)
+    sec_buf.size = vsf_sysutil_statbuf_get_size(p_stat);
+    if (sec_buf.size > maxsize)
     {
-      size = maxsize;
+      sec_buf.size = maxsize;
     }
-    vsf_secbuf_alloc(&p_sec_buf, (unsigned int) size);
+    vsf_secbuf_alloc(&sec_buf);
 
-    retval = vsf_sysutil_read_loop(fd, p_sec_buf, (unsigned int) size);
+    retval = vsf_sysutil_read_loop(fd, sec_buf.p_ptr, (unsigned int) sec_buf.size);
     if (vsf_sysutil_retval_is_error(retval))
     {
       goto free_out;
     }
-    else if ((unsigned int) retval != size)
+    else if ((unsigned int) retval != sec_buf.size)
     {
       die("read size mismatch");
     }
-    str_alloc_memchunk(p_str, p_sec_buf, (unsigned int) size);
+    str_alloc_memchunk(p_str, sec_buf.p_ptr, (unsigned int) sec_buf.size);
   }
 free_out:
   vsf_sysutil_free(p_stat);
-  vsf_secbuf_free(&p_sec_buf);
+  vsf_secbuf_free(&sec_buf);
   vsf_sysutil_close(fd);
   return retval;
 }

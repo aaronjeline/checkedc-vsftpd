@@ -23,7 +23,7 @@ str_getcwd(struct mystr* p_str)
   char* p_ret;
   if (p_getcwd_buf == 0)
   {
-    vsf_secbuf_alloc(&p_getcwd_buf, VSFTP_PATH_MAX);
+    vsf_secbuf_static_alloc(p_getcwd_buf, VSFTP_PATH_MAX);
   }
   /* In case getcwd() fails */
   str_empty(p_str);
@@ -150,7 +150,7 @@ str_readlink(struct mystr* p_str, const struct mystr* p_filename_str)
   int retval;
   if (p_readlink_buf == 0)
   {
-    vsf_secbuf_alloc(&p_readlink_buf, VSFTP_PATH_MAX);
+    vsf_secbuf_static_alloc(p_readlink_buf, VSFTP_PATH_MAX);
   }
   /* In case readlink() fails */
   str_empty(p_str);
