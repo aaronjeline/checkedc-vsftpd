@@ -100,14 +100,14 @@ void vsf_sysutil_ftruncate(int fd);
 void vsf_sysutil_lseek_to(const int fd, filesize_t seek_pos);
 void vsf_sysutil_lseek_end(const int fd);
 filesize_t vsf_sysutil_get_file_offset(const int file_fd);
-int vsf_sysutil_read(const int fd, void* p_buf, const unsigned int size);
-int vsf_sysutil_write(const int fd, const void* p_buf,
+_Itype_for_any(T) int vsf_sysutil_read(const int fd, void* p_buf : itype(_Array_ptr<T>) byte_count(size), const unsigned int size);
+_Itype_for_any(T) int vsf_sysutil_write(const int fd, const void* p_buf : itype(_Array_ptr<const T>) byte_count(size),
                       const unsigned int size);
 /* Reading and writing, with handling of interrupted system calls and partial
  * reads/writes. Slightly more usable than the standard UNIX API!
  */
-int vsf_sysutil_read_loop(const int fd, void* p_buf, unsigned int size);
-int vsf_sysutil_write_loop(const int fd, const void* p_buf, unsigned int size);
+_Itype_for_any(T) int vsf_sysutil_read_loop(const int fd, void* p_buf : itype(_Array_ptr<T>) byte_count(size), unsigned int size);
+_Itype_for_any(T) int vsf_sysutil_write_loop(const int fd, const void* p_buf : itype(_Array_ptr<const T>) byte_count(size), unsigned int size);
 
 struct vsf_sysutil_statbuf;
 int vsf_sysutil_stat(const char* p_name, struct vsf_sysutil_statbuf** p_ptr);
@@ -155,14 +155,14 @@ enum EVSFSysUtilMapPermission
   kVSFSysUtilMapProtReadOnly = 1,
   kVSFSysUtilMapProtNone
 };
-void vsf_sysutil_memprotect(void* p_addr, unsigned int len,
+_Itype_for_any(T) void vsf_sysutil_memprotect(void* p_addr : itype(_Array_ptr<T>) byte_count(len), unsigned int len,
                             const enum EVSFSysUtilMapPermission perm);
-void vsf_sysutil_memunmap(void* p_start, unsigned int length);
+_Itype_for_any(T) void vsf_sysutil_memunmap(void* p_start : itype(_Array_ptr<T>) byte_count(length), unsigned int length);
 
 /* Memory allocating/freeing */
-void* vsf_sysutil_malloc(unsigned int size);
-void* vsf_sysutil_realloc(void* p_ptr, unsigned int size);
-void vsf_sysutil_free(void* p_ptr);
+_Itype_for_any(T) void* vsf_sysutil_malloc(unsigned int size) : itype(_Array_ptr<T>) byte_count(size);
+_Itype_for_any(T) void* vsf_sysutil_realloc(void* p_ptr : itype(_Array_ptr<T>) byte_count(0), unsigned int size) : itype(_Array_ptr<T>) byte_count(size);
+_Itype_for_any(T) void vsf_sysutil_free(void* p_ptr : itype(_Array_ptr<T>) byte_count(0));
 
 /* Process creation/exit/process handling */
 unsigned int vsf_sysutil_getpid(void);
@@ -188,11 +188,11 @@ int vsf_sysutil_wait_get_exitcode(
 unsigned int vsf_sysutil_strlen(const char* p_text);
 char* vsf_sysutil_strdup(const char* p_str);
 char* vsf_sysutil_strndup(const char* p_str, unsigned int p_len);
-void vsf_sysutil_memclr(void* p_dest, unsigned int size);
-void vsf_sysutil_memcpy(void* p_dest, const void* p_src,
-                        const unsigned int size);
+_Itype_for_any(T) void vsf_sysutil_memclr(void* p_dest : itype(_Array_ptr<T>) byte_count(size), unsigned int size);
+_Itype_for_any(T) void vsf_sysutil_memcpy(void* p_dest : itype(_Array_ptr<T>) byte_count(size), const void* p_src : itype(_Array_ptr<T>) byte_count(size),
+                                          const unsigned int size);
 void vsf_sysutil_strcpy(char* p_dest, const char* p_src, unsigned int maxsize);
-int vsf_sysutil_memcmp(const void* p_src1, const void* p_src2,
+_Itype_for_any(T) int vsf_sysutil_memcmp(const void* p_src1 : itype(_Array_ptr<const T>) byte_count(size) , const void* p_src2 : itype(_Array_ptr<const T>) byte_count(size),
                        unsigned int size);
 int vsf_sysutil_strcmp(const char* p_src1, const char* p_src2);
 int vsf_sysutil_atoi(const char* p_str);
@@ -277,7 +277,7 @@ void vsf_sysutil_deactivate_noblock(int fd);
 void vsf_sysutil_shutdown_failok(int fd);
 /* And this does SHUT_RD */
 void vsf_sysutil_shutdown_read_failok(int fd);
-int vsf_sysutil_recv_peek(const int fd, void* p_buf, unsigned int len);
+_Itype_for_any(T) int vsf_sysutil_recv_peek(const int fd, void* p_buf : itype(_Array_ptr<T>) byte_count(len), unsigned int len);
 
 const char* vsf_sysutil_inet_ntop(
   const struct vsf_sysutil_sockaddr* p_sockptr);

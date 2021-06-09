@@ -389,8 +389,9 @@ vsf_sysutil_write(const int fd, const void* p_buf, const unsigned int size)
 }
 
 int
-vsf_sysutil_read_loop(const int fd, void* p_buf, unsigned int size)
+vsf_sysutil_read_loop(const int fd, void* p_buf, unsigned int size_bound)
 {
+  unsigned int size = size_bound;
   int retval;
   int num_read = 0;
   if (size > INT_MAX)
@@ -424,8 +425,9 @@ vsf_sysutil_read_loop(const int fd, void* p_buf, unsigned int size)
 }
 
 int
-vsf_sysutil_write_loop(const int fd, const void* p_buf, unsigned int size)
+vsf_sysutil_write_loop(const int fd, const void* p_buf, unsigned int size_bound)
 {
+  unsigned int size = size_bound;
   int retval;
   int num_written = 0;
   if (size > INT_MAX)
