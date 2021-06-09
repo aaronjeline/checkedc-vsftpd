@@ -2,10 +2,11 @@
 CC 	=	clang
 INSTALL	=	install
 IFLAGS  = -idirafter dummyinc
-CFLAGS = -g -w -O0
-#CFLAGS	=	-O2 -fPIE -fstack-protector --param=ssp-buffer-size=4 \
+CFLAGS	=	-O2 -fPIE -fstack-protector --param=ssp-buffer-size=4 \
 	-Wall -W -Wshadow -Werror -Wformat-security \
 	-D_FORTIFY_SOURCE=2 \
+	-Wno-incompatible-pointer-types-discards-qualifiers \
+	-Wno-enum-conversion \
 	#-pedantic -Wconversion
 
 LIBS	=	`./vsf_findlibs.sh`

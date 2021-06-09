@@ -1022,7 +1022,7 @@ vsf_sysutil_realpath(char const *path, int may_be_fresh)
     char *resolved;
 
     /* empty root as slash is added anyways */
-    if (dir_len == 1)  dir_len == 0;
+    if (dir_len == 1)  dir_len = 0;
 
     resolved = (char*)malloc(dir_len+strlen(filename)+2);
     strcpy(resolved, resolved_dir);
