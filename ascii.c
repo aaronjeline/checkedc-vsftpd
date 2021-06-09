@@ -9,27 +9,28 @@
 
 #include "ascii.h"
 
+#pragma CHECKED_SCOPE on
+
 struct ascii_to_bin_ret
-vsf_ascii_ascii_to_bin(char* p_buf, unsigned int in_len, int prev_cr)
+vsf_ascii_ascii_to_bin(char *p_buf : count(in_len), unsigned int in_len, int prev_cr)
 {
   /* Task: translate all \r\n into plain \n. A plain \r not followed by \n must
    * not be removed.
    */
-  struct ascii_to_bin_ret ret;
   unsigned int indexx = 0;
   unsigned int written = 0;
-  char* p_out = p_buf + 1;
-  ret.last_was_cr = 0;
+  _Array_ptr<char> p_out : bounds(p_buf + 1, p_buf + in_len) = 0;
   if (prev_cr && (!in_len || p_out[0] != '\n'))
   {
     p_buf[0] = '\r';
-    ret.p_buf = p_buf;
+    p_out = p_buf;
     written++;
   }
   else
   {
-    ret.p_buf = p_out;
+    p_out = p_buf + 1;
   }
+  int last_was_cr = 0;
   while (indexx < in_len)
   {
     char the_char = p_buf[indexx + 1];
@@ -40,7 +41,7 @@ vsf_ascii_ascii_to_bin(char* p_buf, unsigned int in_len, int prev_cr)
     }
     else if (indexx == in_len - 1)
     {
-      ret.last_was_cr = 1;
+      last_was_cr = 1;
     }
     else if (p_buf[indexx + 2] != '\n')
     {
@@ -49,20 +50,19 @@ vsf_ascii_ascii_to_bin(char* p_buf, unsigned int in_len, int prev_cr)
     }
     indexx++;
   }
-  ret.stored = written;
+
+  struct ascii_to_bin_ret ret = {written, last_was_cr, p_out};
   return ret;
 }
 
 struct bin_to_ascii_ret
-vsf_ascii_bin_to_ascii(const char* p_in,
-                       char* p_out,
-                       unsigned int in_len,
-                       int prev_cr)
+vsf_ascii_bin_to_ascii(const char *p_in : count(in_len), char *p_buf : count(2 * in_len), unsigned int in_len, int prev_cr)
 {
   /* Task: translate all \n not preceeded by \r into \r\n.
    * Note that \r\n stays as \r\n. We used to map it to \r\r\n like wu-ftpd
    * but have switched to leaving it, like the more popular proftpd.
    */
+  _Array_ptr<char> p_out : bounds(p_buf, p_buf + ( 2 * in_len)) = p_buf;
   struct bin_to_ascii_ret ret = { 0, 0 };
   unsigned int indexx = 0;
   unsigned int written = 0;
