@@ -884,7 +884,7 @@ vsf_sysutil_setproctitle(const char* p_text)
 
 #ifdef VSF_SYSDEP_HAVE_SETPROCTITLE
 void
-vsf_sysutil_setproctitle_init(int argc, const char* argv[])
+vsf_sysutil_setproctitle_init(int argc, const char** argv)
 {
   (void) argc;
   (void) argv;
@@ -897,7 +897,7 @@ vsf_sysutil_setproctitle_internal(const char* p_buf)
 }
 #elif defined(VSF_SYSDEP_HAVE_HPUX_SETPROCTITLE)
 void
-vsf_sysutil_setproctitle_init(int argc, const char* argv[])
+vsf_sysutil_setproctitle_init(int argc, const char** argv)
 {
   (void) argc;
   (void) argv;
@@ -916,7 +916,7 @@ vsf_sysutil_setproctitle_internal(const char* p_buf)
 }
 #elif defined(VSF_SYSDEP_TRY_LINUX_SETPROCTITLE_HACK)
 void
-vsf_sysutil_setproctitle_init(int argc, const char* argv[])
+vsf_sysutil_setproctitle_init(int argc, const char** argv)
 {
   int i;
   char** p_env = environ;
@@ -975,7 +975,7 @@ vsf_sysutil_setproctitle_internal(const char* p_buf)
 }
 #else /* VSF_SYSDEP_HAVE_SETPROCTITLE */
 void
-vsf_sysutil_setproctitle_init(int argc, const char* argv[])
+vsf_sysutil_setproctitle_init(int argc, const char** argv)
 {
   (void) argc;
   (void) argv;
