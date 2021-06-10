@@ -19,8 +19,8 @@ void vsf_cmdio_sock_setup(void);
  * status       - the status code to report
  * p_text       - the text to report
  */
-void vsf_cmdio_write(struct vsf_session* p_sess, int status,
-                     const char* p_text);
+void vsf_cmdio_write(struct vsf_session* p_sess : itype(_Ptr<struct vsf_session>), int status,
+                     const char* p_text : itype(_Nt_array_ptr<const char>));
 
 /* vsf_cmdio_write_hyphen()
  * PURPOSE
@@ -31,8 +31,8 @@ void vsf_cmdio_write(struct vsf_session* p_sess, int status,
  * status       - the status code to report
  * p_text       - the text to report
  */
-void vsf_cmdio_write_hyphen(struct vsf_session* p_sess, int status,
-                            const char* p_text);
+void vsf_cmdio_write_hyphen(struct vsf_session* p_sess : itype(_Ptr<struct vsf_session>), int status,
+                            const char* p_text : itype(_Nt_array_ptr<const char>));
 
 /* vsf_cmdio_write_raw()
  * PURPOSE
@@ -43,7 +43,7 @@ void vsf_cmdio_write_hyphen(struct vsf_session* p_sess, int status,
  * p_sess       - the current session object
  * p_text       - the text to report
  */
-void vsf_cmdio_write_raw(struct vsf_session* p_sess, const char* p_text);
+void vsf_cmdio_write_raw(struct vsf_session* p_sess : itype(_Ptr<struct vsf_session>), const char* p_text : itype(_Nt_array_ptr<const char>));
 
 /* vsf_cmdio_write_exit()
  * PURPOSE
