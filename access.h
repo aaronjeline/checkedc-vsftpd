@@ -12,7 +12,7 @@ struct mystr;
  * RETURNS
  * Returns 1 if access is granted, otherwise 0.
  */
-int vsf_access_check_file(const struct mystr* p_filename_str);
+int vsf_access_check_file(const struct mystr *p_filename_str : itype(_Ptr<const struct mystr>));
 
 /* vsf_access_check_file_visible()
  * PURPOSE
@@ -23,7 +23,7 @@ int vsf_access_check_file(const struct mystr* p_filename_str);
  * RETURNS
  * Returns 1 if the file should be visible, otherwise 0.
  */
-int vsf_access_check_file_visible(const struct mystr* p_filename_str);
+int vsf_access_check_file_visible(const struct mystr *p_filename_str : itype(_Ptr<const struct mystr>));
 
 /* vsf_access_check_file_upload()
  * PURPOSE
@@ -34,7 +34,7 @@ int vsf_access_check_file_visible(const struct mystr* p_filename_str);
  * RETURNS
  * Returns 1 if the file may be uploaded, otherwise 0.
  */
-int vsf_access_check_file_upload(const struct mystr* p_filename_str);
+int vsf_access_check_file_upload(const struct mystr *p_filename_str : itype(_Ptr<const struct mystr>));
 
 /* vsf_access_check_file_download()
  * PURPOSE
@@ -45,7 +45,7 @@ int vsf_access_check_file_upload(const struct mystr* p_filename_str);
  * RETURNS
  * Returns 1 if the file may be downloaded, otherwise 0.
  */
-int vsf_access_check_file_download(const struct mystr* p_filename_str);
+int vsf_access_check_file_download(const struct mystr *p_filename_str : itype(_Ptr<const struct mystr>));
 
 #endif /* VSF_ACCESS_H */
 

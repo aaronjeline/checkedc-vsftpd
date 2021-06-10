@@ -40,9 +40,10 @@ void vsf_ls_populate_dir_list(struct mystr_list* p_list,
  * RETURNS
  * Returns 1 if there is a match, 0 otherwise.
  */
-int vsf_filename_passes_filter(const struct mystr* p_filename_str,
-                               const struct mystr* p_filter_str,
-                               unsigned int* iters);
+
+int vsf_filename_passes_filter(const struct mystr *p_filename_str : itype(_Ptr<const struct mystr>),
+                               const struct mystr *p_filter_str : itype(_Ptr<const struct mystr>),
+                               unsigned int *iters : itype(_Ptr<unsigned int>));
 
 #endif /* VSF_LS_H */
 

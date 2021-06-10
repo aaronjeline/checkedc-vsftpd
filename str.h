@@ -37,7 +37,7 @@ void str_free(struct mystr* p_str : itype(_Ptr<struct mystr>));
 void str_trunc(struct mystr* p_str : itype(_Ptr<struct mystr>), unsigned int trunc_len);
 void str_reserve(struct mystr* p_str : itype(_Ptr<struct mystr>), unsigned int res_len);
 
-int str_isempty(const struct mystr* p_str);
+int str_isempty(const struct mystr* p_str : itype(_Ptr<const struct mystr>));
 unsigned int str_getlen(const struct mystr* p_str : itype(_Ptr<const struct mystr>));
 const char* str_getbuf(const struct mystr* p_str : itype(_Ptr<const struct mystr>)) : itype(_Nt_array_ptr<const char>);
 
@@ -76,7 +76,7 @@ struct str_locate_result
 struct str_locate_result str_locate_char(
   const struct mystr* p_str, char look_char);
 struct str_locate_result str_locate_str(
-  const struct mystr* p_str, const struct mystr* p_look_str);
+  const struct mystr* p_str : itype(_Ptr<const struct mystr>), const struct mystr* p_look_str : itype(_Ptr<const struct mystr>));
 struct str_locate_result str_locate_str_reverse(
   const struct mystr* p_str, const struct mystr* p_look_str);
 struct str_locate_result str_locate_text(

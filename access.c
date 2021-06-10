@@ -12,9 +12,10 @@
 #include "tunables.h"
 #include "str.h"
 
+#pragma CHECKED_SCOPE on
+
 static int
-vsf_match_filter(struct mystr const *const p_filename_str,
-		 struct mystr const *const p_access_str) {
+vsf_match_filter(const _Ptr<const struct mystr> p_filename_str, const _Ptr<const struct mystr> p_access_str) {
 
   unsigned  iters = 0;
   if (vsf_filename_passes_filter(p_filename_str, p_access_str, &iters))
@@ -30,9 +31,9 @@ vsf_match_filter(struct mystr const *const p_filename_str,
 }
 
 int
-vsf_access_check_file(const struct mystr* p_filename_str)
+vsf_access_check_file(const struct mystr *p_filename_str : itype(_Ptr<const struct mystr>))
 {
-  static struct mystr s_access_str;
+  static struct mystr s_access_str = {};
 
   if (!tunable_deny_file)
   {
@@ -54,9 +55,9 @@ vsf_access_check_file(const struct mystr* p_filename_str)
 }
 
 int
-vsf_access_check_file_visible(const struct mystr* p_filename_str)
+vsf_access_check_file_visible(const struct mystr *p_filename_str : itype(_Ptr<const struct mystr>))
 {
-  static struct mystr s_access_str;
+  static struct mystr s_access_str = {};
 
   if (!tunable_hide_file)
   {
@@ -78,9 +79,9 @@ vsf_access_check_file_visible(const struct mystr* p_filename_str)
 }
 
 int
-vsf_access_check_file_upload(const struct mystr* p_filename_str)
+vsf_access_check_file_upload(const struct mystr *p_filename_str : itype(_Ptr<const struct mystr>))
 {
-  static struct mystr s_access_str;
+  static struct mystr s_access_str = {};
 
   if (!tunable_upload_file)
   {
@@ -95,9 +96,9 @@ vsf_access_check_file_upload(const struct mystr* p_filename_str)
 }
 
 int
-vsf_access_check_file_download(const struct mystr* p_filename_str)
+vsf_access_check_file_download(const struct mystr *p_filename_str : itype(_Ptr<const struct mystr>))
 {
-  static struct mystr s_access_str;
+  static struct mystr s_access_str = {};
 
   if (!tunable_download_file)
   {
