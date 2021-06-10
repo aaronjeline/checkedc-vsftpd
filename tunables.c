@@ -8,6 +8,8 @@
 #include "tunables.h"
 #include "sysutil.h"
 
+#pragma CHECKED_SCOPE on
+
 int tunable_anonymous_enable;
 int tunable_local_enable;
 int tunable_utf8_filesystem;
@@ -146,10 +148,10 @@ const char* tunable_rsa_private_key_file;
 const char* tunable_dsa_private_key_file;
 const char* tunable_ca_certs_file;
 
-static void install_str_setting(const char* p_value, const char** p_storage);
+static void install_str_setting(_Nt_array_ptr<const char> p_value, _Ptr<const char *> p_storage : itype(_Ptr<_Nt_array_ptr<const char>>));
 
 void
-tunables_load_defaults()
+tunables_load_defaults(void)
 {
   tunable_anonymous_enable = 1;
   tunable_local_enable = 0;
@@ -258,6 +260,7 @@ tunables_load_defaults()
   /* -rw------- */
   tunable_chown_upload_mode = 0600;
 
+  _Unchecked {
   install_str_setting("/var/run/vsftpd/empty", &tunable_secure_chroot_dir);
   install_str_setting("ftp", &tunable_ftp_username);
   install_str_setting("root", &tunable_chown_username);
@@ -294,15 +297,16 @@ tunables_load_defaults()
   install_str_setting(0, &tunable_rsa_private_key_file);
   install_str_setting(0, &tunable_dsa_private_key_file);
   install_str_setting(0, &tunable_ca_certs_file);
+  }
 }
 
 void
-install_str_setting(const char* p_value, const char** p_storage)
+install_str_setting(_Nt_array_ptr<const char> p_value, _Ptr<const char *> p_storage : itype(_Ptr<_Nt_array_ptr<const char>>))
 {
-  char* p_curr_val = (char*) *p_storage;
+  _Nt_array_ptr<char> p_curr_val = *p_storage;
   if (p_curr_val != 0)
   {
-    vsf_sysutil_free(p_curr_val);
+    vsf_sysutil_free<char>(p_curr_val);
   }
   if (p_value != 0)
   {
