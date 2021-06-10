@@ -9,7 +9,7 @@
 
 struct mystr
 {
-  char* PRIVATE_HANDS_OFF_p_buf;
+  char* PRIVATE_HANDS_OFF_p_buf : itype(_Array_ptr<char>) count(PRIVATE_HANDS_OFF_alloc_bytes);
   /* Internally, EXCLUDES trailing null */
   unsigned int PRIVATE_HANDS_OFF_len;
   unsigned int PRIVATE_HANDS_OFF_alloc_bytes;
@@ -33,7 +33,7 @@ void str_copy(struct mystr* p_dest, const struct mystr* p_src);
 const char* str_strdup(const struct mystr* p_str);
 const char* str_strdup_trimmed(const struct mystr* p_str);
 void str_empty(struct mystr* p_str);
-void str_free(struct mystr* p_str);
+void str_free(struct mystr* p_str : itype(_Ptr<struct mystr>));
 void str_trunc(struct mystr* p_str, unsigned int trunc_len);
 void str_reserve(struct mystr* p_str, unsigned int res_len);
 
@@ -112,8 +112,8 @@ void str_basename (struct mystr* d_str, const struct mystr* path);
  * emptied if there are no more lines. 'p_pos' is updated to point to the
  * first character after the end of the line just extracted.
  */
-int str_getline(const struct mystr* p_str, struct mystr* p_line_str,
-                unsigned int* p_pos);
+int str_getline(const struct mystr* p_str : itype(_Ptr<const struct mystr>), struct mystr* p_line_str : itype(_Ptr<struct mystr>),
+                unsigned int* p_pos : itype(_Ptr<unsigned int>));
 
 /* PURPOSE: Detect whether or not a string buffer contains a specific line
  * of text (delimited by \n or EOF).

@@ -67,8 +67,8 @@ void vsf_cmdio_write_str(struct vsf_session* p_sess, int status,
  * output with the continuation indicator '-' between the response code and
  * the response text. This indicates there are more lines of response.
  */
-void vsf_cmdio_write_str_hyphen(struct vsf_session* p_sess, int status,
-                                const struct mystr* p_str);
+void vsf_cmdio_write_str_hyphen(struct vsf_session* p_sess : itype(_Ptr<struct vsf_session>), int status,
+                                const struct mystr* p_str : itype(_Ptr<const struct mystr>));
 
 /* vsf_cmdio_set_alarm()
  * PURPOSE

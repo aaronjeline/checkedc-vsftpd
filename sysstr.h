@@ -7,7 +7,7 @@ struct vsf_sysutil_statbuf;
 struct vsf_sysutil_dir;
 struct vsf_sysutil_user;
 
-void str_getcwd(struct mystr* p_str);
+void str_getcwd(struct mystr* p_str : itype(_Ptr<struct mystr>));
 int str_readlink(struct mystr* p_str, const struct mystr* p_filename_str);
 int str_write_loop(const struct mystr* p_str, const int fd);
 int str_read_loop(struct mystr* p_str, const int fd);
