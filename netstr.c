@@ -15,19 +15,15 @@
 #include "utility.h"
 #include "sysutil.h"
 
+#pragma CHECKED_SCOPE on
+
 int
-str_netfd_alloc(struct vsf_session* p_sess,
-                struct mystr* p_str,
-                char term,
-                char* p_readbuf,
-                unsigned int maxlen,
-                str_netfd_read_t p_peekfunc,
-                str_netfd_read_t p_readfunc)
+str_netfd_alloc(struct vsf_session *p_sess : itype(_Ptr<struct vsf_session>), struct mystr *p_str : itype(_Ptr<struct mystr>), char term, char *p_readbuf : count(maxlen), unsigned int maxlen, str_netfd_read_t *p_peekfunc : itype(_Ptr<str_netfd_read_t>) , str_netfd_read_t *p_readfunc : itype(_Ptr<str_netfd_read_t>))
 {
   int retval;
   unsigned int bytes_read;
   unsigned int i;
-  char* p_readpos = p_readbuf;
+  _Array_ptr<char> p_readpos : bounds(p_readbuf, p_readbuf + maxlen) = p_readbuf;
   unsigned int left = maxlen;
   str_empty(p_str);
   while (1)
@@ -58,7 +54,8 @@ str_netfd_alloc(struct vsf_session* p_sess,
       {
         /* Got it! */
         i++;
-        retval = (*p_readfunc)(p_sess, p_readpos, i);
+        _Array_ptr<char> tmp_read_pos : count(i) = _Dynamic_bounds_cast<_Array_ptr<char>>(p_readpos, count(i));
+        retval = (*p_readfunc)(p_sess, tmp_read_pos, i);
         if (vsf_sysutil_retval_is_error(retval) ||
             (unsigned int) retval != i)
         {
@@ -78,7 +75,8 @@ str_netfd_alloc(struct vsf_session* p_sess,
       bug("bytes_read > left in str_netfd_alloc");
     }
     left -= bytes_read;
-    retval = (*p_readfunc)(p_sess, p_readpos, bytes_read);
+    _Array_ptr<char> tmp_read_pos : count(bytes_read) = _Dynamic_bounds_cast<_Array_ptr<char>>(p_readpos, count(bytes_read));
+    retval = (*p_readfunc)(p_sess, tmp_read_pos, bytes_read);
     if (vsf_sysutil_retval_is_error(retval) ||
         (unsigned int) retval != bytes_read)
     {
@@ -89,7 +87,7 @@ str_netfd_alloc(struct vsf_session* p_sess,
 }
 
 int
-str_netfd_write(const struct mystr* p_str, int fd)
+str_netfd_write(const struct mystr *p_str : itype(_Ptr<const struct mystr>), int fd)
 {
   int ret = 0;
   int retval;
@@ -107,7 +105,7 @@ str_netfd_write(const struct mystr* p_str, int fd)
 }
 
 int
-str_netfd_read(struct mystr* p_str, int fd, unsigned int len)
+str_netfd_read(struct mystr *p_str : itype(_Ptr<struct mystr>), int fd, unsigned int len)
 {
   int retval;
   str_reserve(p_str, len);

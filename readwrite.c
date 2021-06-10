@@ -140,8 +140,8 @@ ftp_getline(struct vsf_session* p_sess, struct mystr* p_str, char* p_buf)
   }
   else
   {
-    str_netfd_read_t p_peek = plain_peek_adapter;
-    str_netfd_read_t p_read = plain_read_adapter;
+    str_netfd_read_t *p_peek = plain_peek_adapter;
+    str_netfd_read_t *p_read = plain_read_adapter;
     if (p_sess->control_use_ssl)
     {
       p_peek = ssl_peek_adapter;
