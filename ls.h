@@ -19,13 +19,7 @@ struct vsf_sysutil_dir;
  * p_filter_str   - the filter string given to LIST/NLST - e.g. "*.mp3"
  * is_verbose     - set to 1 for LIST, 0 for NLST
  */
-void vsf_ls_populate_dir_list(struct mystr_list* p_list,
-                              struct mystr_list* p_subdir_list,
-                              struct vsf_sysutil_dir* p_dir,
-                              const struct mystr* p_base_dir_str,
-                              const struct mystr* p_option_str,
-                              const struct mystr* p_filter_str,
-                              int is_verbose);
+void vsf_ls_populate_dir_list(struct mystr_list *p_list : itype(_Ptr<struct mystr_list>), struct mystr_list *p_subdir_list : itype(_Ptr<struct mystr_list>), struct vsf_sysutil_dir *p_dir : itype(_Ptr<struct vsf_sysutil_dir>), const struct mystr *p_base_dir_str : itype(_Ptr<const struct mystr>), const struct mystr *p_option_str : itype(_Ptr<const struct mystr>), const struct mystr *p_filter_str : itype(_Ptr<const struct mystr>), int is_verbose);
 
 /* vsf_filename_passes_filter()
  * PURPOSE
@@ -41,9 +35,7 @@ void vsf_ls_populate_dir_list(struct mystr_list* p_list,
  * Returns 1 if there is a match, 0 otherwise.
  */
 
-int vsf_filename_passes_filter(const struct mystr *p_filename_str : itype(_Ptr<const struct mystr>),
-                               const struct mystr *p_filter_str : itype(_Ptr<const struct mystr>),
-                               unsigned int *iters : itype(_Ptr<unsigned int>));
+int vsf_filename_passes_filter(const struct mystr *p_filename_str : itype(_Ptr<const struct mystr>), const struct mystr *p_filter_str : itype(_Ptr<const struct mystr>), unsigned int *iters : itype(_Ptr<unsigned int>));
 
 #endif /* VSF_LS_H */
 

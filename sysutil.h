@@ -66,7 +66,7 @@ int vsf_sysutil_mkdir(const char* p_dirname, const unsigned int mode);
 int vsf_sysutil_rmdir(const char* p_dirname);
 int vsf_sysutil_chdir(const char* p_dirname);
 int vsf_sysutil_rename(const char* p_from, const char* p_to);
-char* vsf_sysutil_realpath(char const *path, int may_be_fresh);
+char* vsf_sysutil_realpath(char const *path : itype(_Nt_array_ptr<const char>), int may_be_fresh) : itype(_Nt_array_ptr<char>);
 
 struct vsf_sysutil_dir;
 struct vsf_sysutil_dir* vsf_sysutil_opendir(const char* p_dirname);
@@ -116,25 +116,25 @@ void vsf_sysutil_fstat(int fd, struct vsf_sysutil_statbuf** p_ptr);
 void vsf_sysutil_dir_stat(const struct vsf_sysutil_dir* p_dir,
                           struct vsf_sysutil_statbuf** p_ptr);
 int vsf_sysutil_statbuf_is_regfile(const struct vsf_sysutil_statbuf* p_stat);
-int vsf_sysutil_statbuf_is_symlink(const struct vsf_sysutil_statbuf* p_stat);
+int vsf_sysutil_statbuf_is_symlink(const struct vsf_sysutil_statbuf* p_stat : itype(_Ptr<const struct vsf_sysutil_statbuf>));
 int vsf_sysutil_statbuf_is_socket(const struct vsf_sysutil_statbuf* p_stat);
-int vsf_sysutil_statbuf_is_dir(const struct vsf_sysutil_statbuf* p_stat);
+int vsf_sysutil_statbuf_is_dir(const struct vsf_sysutil_statbuf* p_stat : itype(_Ptr<const struct vsf_sysutil_statbuf>));
 filesize_t vsf_sysutil_statbuf_get_size(
-  const struct vsf_sysutil_statbuf* p_stat);
+  const struct vsf_sysutil_statbuf* p_stat : itype(_Ptr<const struct vsf_sysutil_statbuf>));
 const char* vsf_sysutil_statbuf_get_perms(
-  const struct vsf_sysutil_statbuf* p_stat);
+  const struct vsf_sysutil_statbuf* p_stat : itype(_Ptr<const struct vsf_sysutil_statbuf>)) : itype(_Nt_array_ptr<const char>); 
 const char* vsf_sysutil_statbuf_get_date(
-  const struct vsf_sysutil_statbuf* p_stat, int use_localtime, long curr_time);
+  const struct vsf_sysutil_statbuf* p_stat : itype(_Ptr<const struct vsf_sysutil_statbuf>) , int use_localtime, long curr_time) : itype(_Nt_array_ptr<const char>);
 const char* vsf_sysutil_statbuf_get_numeric_date(
   const struct vsf_sysutil_statbuf* p_stat, int use_localtime);
 unsigned int vsf_sysutil_statbuf_get_links(
-  const struct vsf_sysutil_statbuf* p_stat);
-int vsf_sysutil_statbuf_get_uid(const struct vsf_sysutil_statbuf* p_stat);
-int vsf_sysutil_statbuf_get_gid(const struct vsf_sysutil_statbuf* p_stat);
+  const struct vsf_sysutil_statbuf* p_stat : itype(_Ptr<const struct vsf_sysutil_statbuf>));
+int vsf_sysutil_statbuf_get_uid(const struct vsf_sysutil_statbuf* p_stat : itype(_Ptr<const struct vsf_sysutil_statbuf>));
+int vsf_sysutil_statbuf_get_gid(const struct vsf_sysutil_statbuf* p_stat : itype(_Ptr<const struct vsf_sysutil_statbuf>));
 int vsf_sysutil_statbuf_is_readable_other(
   const struct vsf_sysutil_statbuf* p_stat);
 const char* vsf_sysutil_statbuf_get_sortkey_mtime(
-  const struct vsf_sysutil_statbuf* p_stat);
+  const struct vsf_sysutil_statbuf* p_stat : itype(_Ptr<const struct vsf_sysutil_statbuf>)) : itype(_Nt_array_ptr<const char>);
 
 int vsf_sysutil_chmod(const char* p_filename, unsigned int mode);
 void vsf_sysutil_fchown(const int fd, const int uid, const int gid);
@@ -289,16 +289,16 @@ int vsf_sysutil_inet_aton(
 struct vsf_sysutil_user;
 struct vsf_sysutil_group;
 
-struct vsf_sysutil_user* vsf_sysutil_getpwuid(const int uid);
+struct vsf_sysutil_user* vsf_sysutil_getpwuid(const int uid) : itype(_Ptr<struct vsf_sysutil_user>);
 struct vsf_sysutil_user* vsf_sysutil_getpwnam(const char* p_user);
-const char* vsf_sysutil_user_getname(const struct vsf_sysutil_user* p_user);
+const char* vsf_sysutil_user_getname(const struct vsf_sysutil_user* p_user : itype(_Ptr<const struct vsf_sysutil_user>)) : itype(_Nt_array_ptr<const char>);
 const char* vsf_sysutil_user_get_homedir(
   const struct vsf_sysutil_user* p_user);
 int vsf_sysutil_user_getuid(const struct vsf_sysutil_user* p_user);
 int vsf_sysutil_user_getgid(const struct vsf_sysutil_user* p_user);
 
-struct vsf_sysutil_group* vsf_sysutil_getgrgid(const int gid);
-const char* vsf_sysutil_group_getname(const struct vsf_sysutil_group* p_group);
+struct vsf_sysutil_group* vsf_sysutil_getgrgid(const int gid) : itype(_Ptr<struct vsf_sysutil_group>);
+const char* vsf_sysutil_group_getname(const struct vsf_sysutil_group* p_group : itype(_Ptr<const struct vsf_sysutil_group>)) : itype(_Nt_array_ptr<const char>);
 
 /* More random things */
 unsigned int vsf_sysutil_getpagesize(void);

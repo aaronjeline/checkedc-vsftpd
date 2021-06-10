@@ -21,17 +21,17 @@ struct mystr
 #ifdef VSFTP_STRING_HELPER
 #define str_alloc_memchunk private_str_alloc_memchunk
 #endif
-void private_str_alloc_memchunk(struct mystr* p_str, const char* p_src,
+void private_str_alloc_memchunk(struct mystr* p_str : itype(_Ptr<struct mystr>), const char* p_src,
                                 unsigned int len);
 
 void str_alloc_text(struct mystr* p_str : itype(_Ptr<struct mystr>), const char* p_src : itype(_Nt_array_ptr<const char>));
 /* NOTE: String buffer data does NOT include terminating character */
 void str_alloc_alt_term(struct mystr* p_str : itype(_Ptr<struct mystr>), const char *p_src : itype(_Array_ptr<const char>), char term);
-void str_alloc_ulong(struct mystr* p_str, unsigned long the_ulong);
-void str_alloc_filesize_t(struct mystr* p_str, filesize_t the_filesize);
-void str_copy(struct mystr* p_dest, const struct mystr* p_src);
-const char* str_strdup(const struct mystr* p_str);
-const char* str_strdup_trimmed(const struct mystr* p_str);
+void str_alloc_ulong(struct mystr* p_str : itype(_Ptr<struct mystr>), unsigned long the_ulong);
+void str_alloc_filesize_t(struct mystr* p_str : itype(_Ptr<struct mystr>), filesize_t the_filesize);
+void str_copy(struct mystr* p_dest : itype(_Ptr<struct mystr>), const struct mystr* p_src : itype(_Ptr<const struct mystr>));
+const char* str_strdup(const struct mystr* p_str : itype(_Ptr<const struct mystr>)) : itype(_Nt_array_ptr<const char>);
+const char* str_strdup_trimmed(const struct mystr* p_str : itype(_Ptr<const struct mystr>));
 void str_empty(struct mystr* p_str : itype(_Ptr<struct mystr>));
 void str_free(struct mystr* p_str : itype(_Ptr<struct mystr>));
 void str_trunc(struct mystr* p_str : itype(_Ptr<struct mystr>), unsigned int trunc_len);
@@ -43,23 +43,23 @@ const char* str_getbuf(const struct mystr* p_str : itype(_Ptr<const struct mystr
 
 int str_strcmp(const struct mystr* p_str1, const struct mystr* p_str2);
 int str_equal(const struct mystr* p_str1, const struct mystr* p_str2);
-int str_equal_text(const struct mystr* p_str, const char* p_text);
+int str_equal_text(const struct mystr* p_str : itype(_Ptr<const struct mystr>), const char* p_text : itype(_Nt_array_ptr<const char>));
 
-void str_append_str(struct mystr* p_str, const struct mystr* p_other);
+void str_append_str(struct mystr* p_str : itype(_Ptr<struct mystr>), const struct mystr* p_other : itype(_Ptr<const struct mystr>));
 void str_append_text(struct mystr* p_str : itype(_Ptr<struct mystr>), const char* p_src : itype(_Nt_array_ptr<const char>));
-void str_append_ulong(struct mystr* p_str, unsigned long the_long);
-void str_append_filesize_t(struct mystr* p_str, filesize_t the_filesize);
-void str_append_char(struct mystr* p_str, char the_char);
-void str_append_double(struct mystr* p_str, double the_double);
+void str_append_ulong(struct mystr* p_str : itype(_Ptr<struct mystr>), unsigned long the_long);
+void str_append_filesize_t(struct mystr* p_str : itype(_Ptr<struct mystr>), filesize_t the_filesize);
+void str_append_char(struct mystr* p_str : itype(_Ptr<struct mystr>), char the_char);
+void str_append_double(struct mystr* p_str : itype(_Ptr<struct mystr>), double the_double);
 
-void str_upper(struct mystr* p_str);
-void str_rpad(struct mystr* p_str, const unsigned int min_width);
-void str_lpad(struct mystr* p_str, const unsigned int min_width);
-void str_replace_char(struct mystr* p_str, char from, char to);
-void str_replace_text(struct mystr* p_str, const char* p_from,
+void str_upper(struct mystr* p_str : itype(_Ptr<struct mystr>));
+void str_rpad(struct mystr* p_str : itype(_Ptr<struct mystr>), const unsigned int min_width);
+void str_lpad(struct mystr* p_str : itype(_Ptr<struct mystr>), const unsigned int min_width);
+void str_replace_char(struct mystr* p_str : itype(_Ptr<struct mystr>), char from, char to);
+void str_replace_text(struct mystr* p_str : itype(_Ptr<struct mystr>), const char* p_from,
                       const char* p_to);
 
-void str_split_char(struct mystr* p_src, struct mystr* p_rhs, char c);
+void str_split_char(struct mystr* p_src : itype(_Ptr<struct mystr>), struct mystr* p_rhs : itype(_Ptr<struct mystr>), char c);
 void str_split_char_reverse(struct mystr* p_src, struct mystr* p_rhs, char c);
 void str_split_text(struct mystr* p_src, struct mystr* p_rhs,
                     const char* p_text);
@@ -74,34 +74,34 @@ struct str_locate_result
 };
 
 struct str_locate_result str_locate_char(
-  const struct mystr* p_str, char look_char);
+  const struct mystr* p_str : itype(_Ptr<const struct mystr>), char look_char);
 struct str_locate_result str_locate_str(
   const struct mystr* p_str : itype(_Ptr<const struct mystr>), const struct mystr* p_look_str : itype(_Ptr<const struct mystr>));
 struct str_locate_result str_locate_str_reverse(
-  const struct mystr* p_str, const struct mystr* p_look_str);
+  const struct mystr* p_str : itype(_Ptr<const struct mystr>), const struct mystr* p_look_str);
 struct str_locate_result str_locate_text(
-  const struct mystr* p_str, const char* p_text);
+  const struct mystr* p_str : itype(_Ptr<const struct mystr>), const char* p_text);
 struct str_locate_result str_locate_text_reverse(
-  const struct mystr* p_str, const char* p_text);
+  const struct mystr* p_str : itype(_Ptr<const struct mystr>), const char* p_text);
 struct str_locate_result str_locate_chars(
-  const struct mystr* p_str, const char* p_chars);
+  const struct mystr* p_str : itype(_Ptr<const struct mystr>), const char* p_chars : itype(_Nt_array_ptr<const char>));
 
-void str_left(const struct mystr* p_str, struct mystr* p_out,
+void str_left(const struct mystr* p_str : itype(_Ptr<const struct mystr>), struct mystr* p_out : itype(_Ptr<struct mystr>),
               unsigned int chars);
-void str_right(const struct mystr* p_str, struct mystr* p_out,
+void str_right(const struct mystr* p_str : itype(_Ptr<const struct mystr>), struct mystr* p_out : itype(_Ptr<struct mystr>),
                unsigned int chars);
-void str_mid_to_end(const struct mystr* p_str, struct mystr* p_out,
+void str_mid_to_end(const struct mystr* p_str : itype(_Ptr<const struct mystr>), struct mystr* p_out : itype(_Ptr<struct mystr>),
                     unsigned int indexx);
 
-char str_get_char_at(const struct mystr* p_str, const unsigned int indexx);
-int str_contains_space(const struct mystr* p_str);
-int str_all_space(const struct mystr* p_str);
-int str_contains_unprintable(const struct mystr* p_str);
-void str_replace_unprintable(struct mystr* p_str, char new_char);
-int str_atoi(const struct mystr* p_str);
-filesize_t str_a_to_filesize_t(const struct mystr* p_str);
-unsigned int str_octal_to_uint(const struct mystr* p_str);
-void str_basename (struct mystr* d_str, const struct mystr* path);
+char str_get_char_at(const struct mystr* p_str : itype(_Ptr<const struct mystr>), const unsigned int indexx);
+int str_contains_space(const struct mystr* p_str : itype(_Ptr<const struct mystr>));
+int str_all_space(const struct mystr* p_str : itype(_Ptr<const struct mystr>));
+int str_contains_unprintable(const struct mystr* p_str : itype(_Ptr<const struct mystr>));
+void str_replace_unprintable(struct mystr* p_str : itype(_Ptr<struct mystr>), char new_char);
+int str_atoi(const struct mystr* p_str : itype(_Ptr<const struct mystr>));
+filesize_t str_a_to_filesize_t(const struct mystr* p_str : itype(_Ptr<const struct mystr>));
+unsigned int str_octal_to_uint(const struct mystr* p_str : itype(_Ptr<const struct mystr>));
+void str_basename (struct mystr* d_str : itype(_Ptr<struct mystr>), const struct mystr* path : itype(_Ptr<const struct mystr>));
 
 /* PURPOSE: Extract a line of text (delimited by \n or EOF) from a string
  * buffer, starting at character position 'p_pos'. The extracted line will
@@ -120,7 +120,7 @@ int str_getline(const struct mystr* p_str : itype(_Ptr<const struct mystr>), str
  *
  * RETURNS: 1 if there is a matching line, 0 otherwise.
  */
-int str_contains_line(const struct mystr* p_str,
+int str_contains_line(const struct mystr* p_str : itype(_Ptr<const struct mystr>),
                       const struct mystr* p_line_str);
 
 #endif /* VSFTP_STR_H */
