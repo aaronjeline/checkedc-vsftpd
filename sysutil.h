@@ -185,7 +185,7 @@ int vsf_sysutil_wait_get_exitcode(
   const struct vsf_sysutil_wait_retval* p_waitret);
 
 /* Various string functions */
-unsigned int vsf_sysutil_strlen(const char* p_text);
+unsigned int vsf_sysutil_strlen(const char* p_text : itype(_Nt_array_ptr<const char>));
 char* vsf_sysutil_strdup(const char* p_str : itype(_Nt_array_ptr<const char>)) : itype(_Nt_array_ptr<char>);
 char* vsf_sysutil_strndup(const char* p_str, unsigned int p_len);
 _Itype_for_any(T) void vsf_sysutil_memclr(void* p_dest : itype(_Array_ptr<T>) byte_count(size), unsigned int size);

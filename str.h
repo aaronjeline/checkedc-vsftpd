@@ -24,7 +24,7 @@ struct mystr
 void private_str_alloc_memchunk(struct mystr* p_str, const char* p_src,
                                 unsigned int len);
 
-void str_alloc_text(struct mystr* p_str, const char* p_src);
+void str_alloc_text(struct mystr* p_str : itype(_Ptr<struct mystr>), const char* p_src : itype(_Nt_array_ptr<const char>));
 /* NOTE: String buffer data does NOT include terminating character */
 void str_alloc_alt_term(struct mystr* p_str, const char* p_src, char term);
 void str_alloc_ulong(struct mystr* p_str, unsigned long the_ulong);
@@ -39,14 +39,14 @@ void str_reserve(struct mystr* p_str, unsigned int res_len);
 
 int str_isempty(const struct mystr* p_str);
 unsigned int str_getlen(const struct mystr* p_str);
-const char* str_getbuf(const struct mystr* p_str);
+const char* str_getbuf(const struct mystr* p_str : itype(_Ptr<const struct mystr>)) : itype(_Nt_array_ptr<const char>);
 
 int str_strcmp(const struct mystr* p_str1, const struct mystr* p_str2);
 int str_equal(const struct mystr* p_str1, const struct mystr* p_str2);
 int str_equal_text(const struct mystr* p_str, const char* p_text);
 
 void str_append_str(struct mystr* p_str, const struct mystr* p_other);
-void str_append_text(struct mystr* p_str, const char* p_src);
+void str_append_text(struct mystr* p_str : itype(_Ptr<struct mystr>), const char* p_src : itype(_Nt_array_ptr<const char>));
 void str_append_ulong(struct mystr* p_str, unsigned long the_long);
 void str_append_filesize_t(struct mystr* p_str, filesize_t the_filesize);
 void str_append_char(struct mystr* p_str, char the_char);
