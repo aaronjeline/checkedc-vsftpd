@@ -26,7 +26,7 @@ struct secbuf {
  *                Any previous buffer pointed to is freed.
  * size         - size in bytes required for the secure buffer.
  */
-void vsf_secbuf_alloc(struct secbuf* buf : itype(_Ptr<struct secbuf>));
+void vsf_secbuf_alloc(struct secbuf *buf : itype(_Ptr<struct secbuf>));
 
 /* vsf_secbuf_free()
  * PURPOSE
@@ -35,7 +35,7 @@ void vsf_secbuf_alloc(struct secbuf* buf : itype(_Ptr<struct secbuf>));
  * p_ptr        - pointer to a pointer containing the buffer to be freed. The
  *                buffer pointer is nullified by this call.
  */
-void vsf_secbuf_free(struct secbuf *buf);
+void vsf_secbuf_free(struct secbuf *buf : itype(_Ptr<struct secbuf>));
 
 #endif /* VSF_SECBUF_H */
 
