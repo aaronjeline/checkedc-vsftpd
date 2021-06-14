@@ -20,13 +20,13 @@
 #include "session.h"
 #include "readwrite.h"
 
+#pragma CHECKED_SCOPE on
+
 /* Internal functions */
-static int control_getline(struct mystr* p_str, struct vsf_session* p_sess);
-static void ftp_write_text_common(struct vsf_session* p_sess, int status,
-                                  const char* p_text, char sep);
-static void ftp_write_str_common(struct vsf_session* p_sess, int status,
-                                 char sep, const struct mystr* p_str);
-static void handle_alarm_timeout(void* p_private);
+static int control_getline(struct mystr *p_str : itype(_Ptr<struct mystr>), struct vsf_session *p_sess : itype(_Ptr<struct vsf_session>));
+static void ftp_write_text_common(struct vsf_session *p_sess : itype(_Ptr<struct vsf_session>), int status, const char *p_text : itype(_Nt_array_ptr<const char>), char sep);
+static void ftp_write_str_common(struct vsf_session *p_sess : itype(_Ptr<struct vsf_session>), int status, char sep, const struct mystr *p_str : itype(_Ptr<const struct mystr>));
+static void handle_alarm_timeout(_Ptr<void> p_private);
 
 void
 vsf_cmdio_sock_setup(void)
@@ -37,31 +37,31 @@ vsf_cmdio_sock_setup(void)
 }
 
 static void
-handle_alarm_timeout(void* p_private)
+handle_alarm_timeout(_Ptr<void> p_private)
 {
-  struct vsf_session* p_sess = (struct vsf_session*) p_private;
+  _Ptr<struct vsf_session> p_sess = 0;
+  _Unchecked { p_sess =  _Assume_bounds_cast<_Ptr<struct vsf_session>>(p_private); }
   p_sess->idle_timeout = 1;
   vsf_sysutil_activate_noblock(VSFTP_COMMAND_FD);
   vsf_sysutil_shutdown_read_failok(VSFTP_COMMAND_FD);
 }
 
 void
-vsf_cmdio_write(struct vsf_session* p_sess, int status, const char* p_text)
+vsf_cmdio_write(struct vsf_session *p_sess : itype(_Ptr<struct vsf_session>), int status, const char *p_text : itype(_Nt_array_ptr<const char>))
 {
   ftp_write_text_common(p_sess, status, p_text, ' ');
 }
 
 void
-vsf_cmdio_write_hyphen(struct vsf_session* p_sess, int status,
-                       const char* p_text)
+vsf_cmdio_write_hyphen(struct vsf_session *p_sess : itype(_Ptr<struct vsf_session>), int status, const char *p_text : itype(_Nt_array_ptr<const char>))
 {
   ftp_write_text_common(p_sess, status, p_text, '-');
 }
 
 void
-vsf_cmdio_write_raw(struct vsf_session* p_sess, const char* p_text)
+vsf_cmdio_write_raw(struct vsf_session *p_sess : itype(_Ptr<struct vsf_session>), const char *p_text : itype(_Nt_array_ptr<const char>))
 {
-  static struct mystr s_the_str;
+  static struct mystr s_the_str = {};
   int retval;
   str_alloc_text(&s_the_str, p_text);
   if (tunable_log_ftp_protocol)
@@ -76,8 +76,7 @@ vsf_cmdio_write_raw(struct vsf_session* p_sess, const char* p_text)
 }
 
 void
-vsf_cmdio_write_exit(struct vsf_session* p_sess, int status, const char* p_text,
-                     int exit_val)
+vsf_cmdio_write_exit(struct vsf_session *p_sess : itype(_Ptr<struct vsf_session>), int status, const char *p_text : itype(_Nt_array_ptr<const char>), int exit_val)
 {
   /* Unblock any readers on the dying control channel. This is needed for SSL
    * connections, where the SSL control channel slave is in a separate
@@ -91,35 +90,31 @@ vsf_cmdio_write_exit(struct vsf_session* p_sess, int status, const char* p_text,
 }
 
 static void
-ftp_write_text_common(struct vsf_session* p_sess, int status,
-                      const char* p_text, char sep)
+ftp_write_text_common(struct vsf_session *p_sess : itype(_Ptr<struct vsf_session>), int status, const char *p_text : itype(_Nt_array_ptr<const char>), char sep)
 {
   /* XXX - could optimize */
-  static struct mystr s_the_str;
+  static struct mystr s_the_str = {};
   str_alloc_text(&s_the_str, p_text);
   ftp_write_str_common(p_sess, status, sep, &s_the_str);
 }
 
 void
-vsf_cmdio_write_str_hyphen(struct vsf_session* p_sess, int status,
-                           const struct mystr* p_str)
+vsf_cmdio_write_str_hyphen(struct vsf_session *p_sess : itype(_Ptr<struct vsf_session>), int status, const struct mystr *p_str : itype(_Ptr<const struct mystr>))
 {
   ftp_write_str_common(p_sess, status, '-', p_str);
 }
 
 void
-vsf_cmdio_write_str(struct vsf_session* p_sess, int status,
-                    const struct mystr* p_str)
+vsf_cmdio_write_str(struct vsf_session *p_sess : itype(_Ptr<struct vsf_session>), int status, const struct mystr *p_str : itype(_Ptr<const struct mystr>))
 {
   ftp_write_str_common(p_sess, status, ' ', p_str);
 }
 
 static void
-ftp_write_str_common(struct vsf_session* p_sess, int status, char sep,
-                     const struct mystr* p_str)
+ftp_write_str_common(struct vsf_session *p_sess : itype(_Ptr<struct vsf_session>), int status, char sep, const struct mystr *p_str : itype(_Ptr<const struct mystr>))
 {
-  static struct mystr s_write_buf_str;
-  static struct mystr s_text_mangle_str;
+  static struct mystr s_write_buf_str = {};
+  static struct mystr s_text_mangle_str = {};
   int retval;
   if (tunable_log_ftp_protocol)
   {
@@ -147,21 +142,21 @@ ftp_write_str_common(struct vsf_session* p_sess, int status, char sep,
 }
 
 void
-vsf_cmdio_set_alarm(struct vsf_session* p_sess)
+vsf_cmdio_set_alarm(struct vsf_session* p_sess : itype(_Ptr<struct vsf_session>))
 {
   if (tunable_idle_session_timeout > 0)
   {
+    _Ptr<void> p_sess_tmp = (_Ptr<void>) p_sess;
     vsf_sysutil_install_sighandler(kVSFSysUtilSigALRM,
                                    handle_alarm_timeout,
-                                   p_sess,
+                                   p_sess_tmp,
                                    1);
     vsf_sysutil_set_alarm(tunable_idle_session_timeout);
   }
 }
 
 void
-vsf_cmdio_get_cmd_and_arg(struct vsf_session* p_sess, struct mystr* p_cmd_str,
-                          struct mystr* p_arg_str, int set_alarm)
+vsf_cmdio_get_cmd_and_arg(struct vsf_session *p_sess : itype(_Ptr<struct vsf_session>), struct mystr *p_cmd_str : itype(_Ptr<struct mystr>), struct mystr *p_arg_str : itype(_Ptr<struct mystr>), int set_alarm)
 {
   int ret;
   /* Prepare an alarm to timeout the session.. */
@@ -197,7 +192,7 @@ vsf_cmdio_get_cmd_and_arg(struct vsf_session* p_sess, struct mystr* p_cmd_str,
   str_upper(p_cmd_str);
   if (tunable_log_ftp_protocol)
   {
-    static struct mystr s_log_str;
+    static struct mystr s_log_str = {};
     if (str_equal_text(p_cmd_str, "PASS"))
     {
       str_alloc_text(&s_log_str, "PASS <password>");
@@ -216,12 +211,14 @@ vsf_cmdio_get_cmd_and_arg(struct vsf_session* p_sess, struct mystr* p_cmd_str,
 }
 
 static int
-control_getline(struct mystr* p_str, struct vsf_session* p_sess)
+control_getline(struct mystr *p_str : itype(_Ptr<struct mystr>), struct vsf_session *p_sess : itype(_Ptr<struct vsf_session>))
 {
   int ret;
   if (p_sess->p_control_line_buf == 0)
   {
-    vsf_secbuf_static_alloc(p_sess->p_control_line_buf, VSFTP_MAX_COMMAND_LINE);
+    _Ptr<struct secbuf> tmp_secbuf = &(struct secbuf){p_sess->p_control_line_buf, p_sess->p_control_line_buf, VSFTP_MAX_COMMAND_LINE, 0};
+    vsf_secbuf_alloc(tmp_secbuf);
+    p_sess->p_control_line_buf = _Dynamic_bounds_cast<_Array_ptr<char>>(tmp_secbuf->p_ptr, count(VSFTP_MAX_COMMAND_LINE));
   }
   ret = ftp_getline(p_sess, p_str, p_sess->p_control_line_buf);
   if (ret == 0)

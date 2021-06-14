@@ -42,7 +42,7 @@ typedef void (*vsf_async_sighandle_t)(int);
 typedef void (*vsf_context_io_t)(int, int, void*);
 
 void vsf_sysutil_install_null_sighandler(const enum EVSFSysUtilSignal sig);
-void vsf_sysutil_install_sighandler(const enum EVSFSysUtilSignal sig, vsf_sighandle_t handler : itype(_Ptr<void (void*)>), void* p_private, int use_alarm);
+void vsf_sysutil_install_sighandler(const enum EVSFSysUtilSignal sig, vsf_sighandle_t handler : itype(_Ptr<void (_Ptr<void>)>), void* p_private : itype(_Ptr<void>), int use_alarm);
 void vsf_sysutil_install_async_sighandler(const enum EVSFSysUtilSignal sig,
                                           vsf_async_sighandle_t handler);
 void vsf_sysutil_default_sig(const enum EVSFSysUtilSignal sig);
