@@ -4,7 +4,7 @@
 struct mystr;
 struct vsf_session;
 
-typedef int str_netfd_read_t(_Ptr<struct vsf_session> p_sess, _Ptr<char> : count(l), unsigned int l) ;
+typedef int str_netfd_read_t(struct vsf_session *p_sess : itype(_Ptr<struct vsf_session>), char *: count(l), unsigned int l) ;
 
 /* str_netfd_alloc()
  * PURPOSE
@@ -29,7 +29,7 @@ typedef int str_netfd_read_t(_Ptr<struct vsf_session> p_sess, _Ptr<char> : count
  * of bytes read, _including_ the terminator. 0 for an EOF on the socket.
  * Does not return (exits) for a serious socket error.
  */
-int str_netfd_alloc(struct vsf_session *p_sess : itype(_Ptr<struct vsf_session>), struct mystr *p_str : itype(_Ptr<struct mystr>), char term, char *p_readbuf : itype(_Array_ptr<char>) count(maxlen), unsigned int maxlen, str_netfd_read_t *p_peekfunc : itype(_Ptr<int (_Ptr<struct vsf_session>, _Array_ptr<char>, unsigned int)>), str_netfd_read_t *p_readfunc : itype(_Ptr<int (_Ptr<struct vsf_session>, _Array_ptr<char>, unsigned int)>));
+int str_netfd_alloc(struct vsf_session *p_sess : itype(_Ptr<struct vsf_session>), struct mystr *p_str : itype(_Ptr<struct mystr>), char term, char *p_readbuf : count(maxlen), unsigned int maxlen, str_netfd_read_t *p_peekfunc : itype(_Ptr<str_netfd_read_t>) , str_netfd_read_t *p_readfunc : itype(_Ptr<str_netfd_read_t>));
 
 /* str_netfd_read()
  * PURPOSE

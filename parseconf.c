@@ -193,9 +193,10 @@ vsf_parseconf_load_file(const char* p_filename, int errs_fatal)
   struct mystr config_value_str = INIT_MYSTR;
   unsigned int str_pos = 0;
   int retval;
-  if (!p_filename)
+  char *tmp = p_filename;
+  if (!tmp)
   {
-    p_filename = s_p_saved_filename;
+    tmp = s_p_saved_filename;
   }
   else
   {
@@ -203,18 +204,18 @@ vsf_parseconf_load_file(const char* p_filename, int errs_fatal)
     {
       vsf_sysutil_free((char*)s_p_saved_filename);
     }
-    s_p_saved_filename = vsf_sysutil_strdup(p_filename);
+    s_p_saved_filename = vsf_sysutil_strdup(tmp);
   }
-  if (!p_filename)
+  if (!tmp)
   {
     bug("null filename in vsf_parseconf_load_file");
   }
-  retval = str_fileread(&config_file_str, p_filename, VSFTP_CONF_FILE_MAX);
+  retval = str_fileread(&config_file_str, tmp, VSFTP_CONF_FILE_MAX);
   if (vsf_sysutil_retval_is_error(retval))
   {
     if (errs_fatal)
     {
-      die2("cannot read config file: ", p_filename);
+      die2("cannot read config file: ", tmp);
     }
     else
     {
@@ -224,7 +225,7 @@ vsf_parseconf_load_file(const char* p_filename, int errs_fatal)
   }
   {
     struct vsf_sysutil_statbuf* p_statbuf = 0;
-    retval = vsf_sysutil_stat(p_filename, &p_statbuf);
+    retval = vsf_sysutil_stat(tmp, &p_statbuf);
     /* Security: check current user owns the config file. These are sanity
      * checks for the admin, and are NOT designed to be checks safe from
      * race conditions.
@@ -257,11 +258,12 @@ vsf_parseconf_load_setting(const char* p_setting, int errs_fatal)
 {
   static struct mystr s_setting_str;
   static struct mystr s_value_str;
-  while (vsf_sysutil_isspace(*p_setting))
+  const char *tmp = p_setting;
+  while (vsf_sysutil_isspace(*tmp))
   {
-    p_setting++;
+    tmp++;
   }
-  str_alloc_text(&s_setting_str, p_setting);
+  str_alloc_text(&s_setting_str, tmp);
   str_split_char(&s_setting_str, &s_value_str, '=');
   /* Is it a string setting? */
   {

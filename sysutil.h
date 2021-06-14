@@ -37,16 +37,16 @@ enum EVSFSysUtilInterruptContext
   kVSFSysUtilUnknown,
   kVSFSysUtilIO
 };
-typedef _Ptr<void (void*)> vsf_sighandle_t;
+typedef void (*vsf_sighandle_t)(void*) ;
 typedef void (*vsf_async_sighandle_t)(int);
-typedef _Ptr<void (int, int, void*)> vsf_context_io_t;
+typedef void (*vsf_context_io_t)(int, int, void*);
 
 void vsf_sysutil_install_null_sighandler(const enum EVSFSysUtilSignal sig);
-void vsf_sysutil_install_sighandler(const enum EVSFSysUtilSignal sig, vsf_sighandle_t handler : itype(vsf_sighandle_t ), void* p_private, int use_alarm);
+void vsf_sysutil_install_sighandler(const enum EVSFSysUtilSignal sig, vsf_sighandle_t handler : itype(_Ptr<void (void*)>), void* p_private, int use_alarm);
 void vsf_sysutil_install_async_sighandler(const enum EVSFSysUtilSignal sig,
                                           vsf_async_sighandle_t handler);
 void vsf_sysutil_default_sig(const enum EVSFSysUtilSignal sig);
-void vsf_sysutil_install_io_handler(vsf_context_io_t handler : itype(vsf_context_io_t ), void* p_private);
+void vsf_sysutil_install_io_handler(vsf_context_io_t handler : itype(_Ptr<void (int, int, void*)>), void* p_private);
 void vsf_sysutil_uninstall_io_handler(void);
 void vsf_sysutil_check_pending_actions(
   const enum EVSFSysUtilInterruptContext context, int retval, int fd);
@@ -275,10 +275,10 @@ void vsf_sysutil_make_session_leader(void);
 void vsf_sysutil_reopen_standard_fds(void);
 void vsf_sysutil_tzset(void);
 const char *vsf_sysutil_get_current_date(void) : itype(_Nt_array_ptr<const char>);
-void vsf_sysutil_qsort(void* p_base, unsigned int num_elem, unsigned int elem_size, int (*)(const void *, const void *) p_compar : itype(_Ptr<int (const void *, const void *)>));
+void vsf_sysutil_qsort(void* p_base, unsigned int num_elem, unsigned int elem_size, int ((*p_compar)(const void *, const void *)) : itype(_Ptr<int (const void *, const void *)>));
 char *vsf_sysutil_getenv(const char *p_var : itype(_Nt_array_ptr<const char>) count(16)) : itype(_Nt_array_ptr<char>);
-typedef _Ptr<void (void)> exitfunc_t;
-void vsf_sysutil_set_exit_func(exitfunc_t exitfunc : itype(exitfunc_t ));
+typedef void (*exitfunc_t)(void);
+void vsf_sysutil_set_exit_func(exitfunc_t exitfunc : itype(_Ptr<void (void)>));
 int vsf_sysutil_getuid(void);
 
 /* Syslogging (bah) */

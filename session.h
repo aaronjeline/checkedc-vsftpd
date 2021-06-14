@@ -20,7 +20,7 @@ struct vsf_session
   /* Details of the control connection */
   struct vsf_sysutil_sockaddr* p_local_addr : itype(_Ptr<struct vsf_sysutil_sockaddr>);
   struct vsf_sysutil_sockaddr* p_remote_addr : itype(_Ptr<struct vsf_sysutil_sockaddr>);
-  _Array_ptr<char> p_control_line_buf : count(4096);
+  char *p_control_line_buf : count(4096);
   int idle_timeout;
   int data_timeout;
 

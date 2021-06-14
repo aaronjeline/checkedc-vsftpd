@@ -4,7 +4,7 @@
 /* Forward delcarations */
 struct pt_sandbox;
 
-typedef _Ptr<int (_Ptr<struct pt_sandbox>, void*)> ptrace_sandbox_validator_t;
+typedef int (*ptrace_sandbox_validator_t)(struct pt_sandbox *, void*) ;
 
 /* ptrace_sandbox_alloc()
  * PURPOSE
@@ -37,7 +37,7 @@ void ptrace_sandbox_free(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_san
  * TODO
  * Only one call to this per sandbox object is supported at this time.
  */
-int ptrace_sandbox_launch_process(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>), void (*)(void *) p_func : itype(_Ptr<void (void *)>), void* p_arg);
+int ptrace_sandbox_launch_process(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>), void ((*p_func)(void *)) : itype(_Ptr<void (void *)>), void* p_arg);
 
 /* ptrace_sandbox_run_processes()
  * PURPOSE
@@ -198,15 +198,15 @@ void ptrace_sandbox_permit_ftruncate(struct pt_sandbox *p_sandbox : itype(_Ptr<s
 /* POLICY EDIT: permits socket() */
 void ptrace_sandbox_permit_socket(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>));
 /* POLICY EDIT: set validator for socket() */
-void ptrace_sandbox_set_socket_validator(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>), ptrace_sandbox_validator_t val : itype(ptrace_sandbox_validator_t ), void* p_arg);
+void ptrace_sandbox_set_socket_validator(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>), ptrace_sandbox_validator_t val : itype(_Ptr<int (_Ptr<struct pt_sandbox>, void *)>), void* p_arg);
 /* POLICY EDIT: permits bind() */
 void ptrace_sandbox_permit_bind(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>));
 /* POLICY EDIT: set validator for bind() */
-void ptrace_sandbox_set_bind_validator(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>), ptrace_sandbox_validator_t val : itype(ptrace_sandbox_validator_t ), void* p_arg);
+void ptrace_sandbox_set_bind_validator(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>), ptrace_sandbox_validator_t val : itype(_Ptr<int (_Ptr<struct pt_sandbox>, void *)>), void* p_arg);
 /* POLICY EDIT: permits connect() */
 void ptrace_sandbox_permit_connect(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>));
 /* POLICY EDIT: set validator for connect() */
-void ptrace_sandbox_set_connect_validator(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>), ptrace_sandbox_validator_t val : itype(ptrace_sandbox_validator_t ), void* p_arg);
+void ptrace_sandbox_set_connect_validator(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>), ptrace_sandbox_validator_t val : itype(_Ptr<int (_Ptr<struct pt_sandbox>, void *)>), void* p_arg);
 /* POLICY EDIT: permits listen() */
 void ptrace_sandbox_permit_listen(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>));
 /* POLICY EDIT: permits accept() */
@@ -214,11 +214,11 @@ void ptrace_sandbox_permit_accept(struct pt_sandbox *p_sandbox : itype(_Ptr<stru
 /* POLICY EDIT: permits setsockopt() */
 void ptrace_sandbox_permit_setsockopt(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>));
 /* POLICY EDIT: set validator for setsockopt() */
-void ptrace_sandbox_set_setsockopt_validator(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>), ptrace_sandbox_validator_t val : itype(ptrace_sandbox_validator_t ), void* p_arg);
+void ptrace_sandbox_set_setsockopt_validator(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>), ptrace_sandbox_validator_t val : itype(_Ptr<int (_Ptr<struct pt_sandbox>, void *)>), void* p_arg);
 /* POLICY EDIT: permits getsockopt() */
 void ptrace_sandbox_permit_getsockopt(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>));
 /* POLICY EDIT: set validator for getsockopt() */
-void ptrace_sandbox_set_getsockopt_validator(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>), ptrace_sandbox_validator_t val : itype(ptrace_sandbox_validator_t ), void* p_arg);
+void ptrace_sandbox_set_getsockopt_validator(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>), ptrace_sandbox_validator_t val : itype(_Ptr<int (_Ptr<struct pt_sandbox>, void *)>), void* p_arg);
 /* POLICY EDIT: permits shutdown() */
 void ptrace_sandbox_permit_shutdown(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>));
 
