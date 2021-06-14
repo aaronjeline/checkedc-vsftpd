@@ -5,7 +5,7 @@
  * PURPOSE
  * Load the default values into the global settings variables.
  */
-void tunables_load_defaults();
+void tunables_load_defaults(void);
 
 /* Configurable preferences */
 /* Booleans */

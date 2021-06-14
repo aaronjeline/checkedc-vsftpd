@@ -23,17 +23,19 @@
 #include "vsftpver.h"
 #include "ssl.h"
 
+#pragma CHECKED_SCOPE on
+
 /*
  * Forward decls of helper functions
  */
 static void die_unless_privileged(void);
 static void do_sanity_checks(void);
-static void session_init(struct vsf_session* p_sess);
+static void session_init(struct vsf_session *p_sess : itype(_Ptr<struct vsf_session>));
 static void env_init(void);
 static void limits_init(void);
 
 int
-main(int argc, const char** argv)
+main(int argc, const char **argv : itype(_Array_ptr<_Nt_array_ptr<const char>>) count(argc))
 {
   struct vsf_session the_session =
   {
@@ -88,50 +90,52 @@ main(int argc, const char** argv)
   }
   for (i = 1; i < argc; ++i)
   {
-    const char* p_arg = argv[i];
+    _Nt_array_ptr<const char> p_arg = argv[i];
     if (p_arg[0] != '-')
     {
       config_loaded = 1;
       vsf_parseconf_load_file(p_arg, 1);
     }
-    else
+    else if (*p_arg)
     {
       if (p_arg[1] == 'v')
       {
         vsf_exit("vsftpd: version " VSF_VERSION "\n");
       }
-      else if (p_arg[1] == 'o')
+      else if (*(p_arg + 1) && p_arg[1] == 'o')
       {
-        vsf_parseconf_load_setting(&p_arg[2], 1);
+        _Nt_array_ptr<char> p_arg_tmp = _Dynamic_bounds_cast<_Nt_array_ptr<char>>(p_arg + 2, count(0));
+        vsf_parseconf_load_setting(p_arg_tmp, 1);
       }
       else
       {
-        die2("unrecognise option: ", p_arg);
+        _Nt_array_ptr<char> p_arg_tmp = _Dynamic_bounds_cast<_Nt_array_ptr<char>>(p_arg, count(0));
+        die2("unrecognise option: ", p_arg_tmp);
       }
     }
   }
   /* Parse default config file if necessary */
   if (!config_loaded) {
-    struct vsf_sysutil_statbuf* p_statbuf = 0;
+    _Ptr<struct vsf_sysutil_statbuf> p_statbuf = 0;
     int retval = vsf_sysutil_stat(VSFTP_DEFAULT_CONFIG, &p_statbuf);
     if (!vsf_sysutil_retval_is_error(retval))
     {
       vsf_parseconf_load_file(VSFTP_DEFAULT_CONFIG, 1);
     }
-    vsf_sysutil_free(p_statbuf);
+    vsf_sysutil_free_ptr<struct vsf_sysutil_statbuf>(p_statbuf);
   }
   /* Resolve pasv_address if required */
   if (tunable_pasv_address && tunable_pasv_addr_resolve)
   {
-    struct vsf_sysutil_sockaddr* p_addr = 0;
-    const char* p_numeric_addr;
+    _Ptr<struct vsf_sysutil_sockaddr> p_addr = 0;
+    _Nt_array_ptr<const char> p_numeric_addr = ((void *)0);
     vsf_sysutil_dns_resolve(&p_addr, tunable_pasv_address);
-    vsf_sysutil_free((char*) tunable_pasv_address);
+    vsf_sysutil_free<char>(tunable_pasv_address);
     p_numeric_addr = vsf_sysutil_inet_ntop(p_addr);
     // Bounds cast added durring porting to allow for itype on tunabel_pasv_address.
     // This can be removed once vsf_sysutil_strdup has a checked type in pre-conversion code.
-    tunable_pasv_address = _Assume_bounds_cast<_Nt_array_ptr<char>>(vsf_sysutil_strdup(p_numeric_addr), count(0));
-    vsf_sysutil_free(p_addr);
+    tunable_pasv_address = vsf_sysutil_strdup(p_numeric_addr);
+    vsf_sysutil_free_ptr<struct vsf_sysutil_sockaddr>(p_addr);
   }
   if (!tunable_run_as_launching_user)
   {
@@ -162,7 +166,7 @@ main(int argc, const char** argv)
     the_session.tcp_wrapper_ok = vsf_tcp_wrapper_ok(VSFTP_COMMAND_FD);
   }
   {
-    const char* p_load_conf = vsf_sysutil_getenv("VSFTPD_LOAD_CONF");
+    _Nt_array_ptr<const char> p_load_conf = vsf_sysutil_getenv("VSFTPD_LOAD_CONF");
     if (p_load_conf)
     {
       vsf_parseconf_load_file(p_load_conf, 1);
@@ -271,13 +275,13 @@ static void
 do_sanity_checks(void)
 {
   {
-    struct vsf_sysutil_statbuf* p_statbuf = 0;
+    _Ptr<struct vsf_sysutil_statbuf> p_statbuf = 0;
     vsf_sysutil_fstat(VSFTP_COMMAND_FD, &p_statbuf);
     if (!vsf_sysutil_statbuf_is_socket(p_statbuf))
     {
       die("vsftpd: not configured for standalone, must be started from inetd");
     }
-    vsf_sysutil_free(p_statbuf);
+    vsf_sysutil_free_ptr<struct vsf_sysutil_statbuf>(p_statbuf);
   }
   if (tunable_one_process_model)
   {
@@ -331,7 +335,7 @@ limits_init(void)
 }
 
 static void
-session_init(struct vsf_session* p_sess)
+session_init(struct vsf_session *p_sess : itype(_Ptr<struct vsf_session>))
 {
   /* Get the addresses of the control connection */
   vsf_sysutil_getpeername(VSFTP_COMMAND_FD, &p_sess->p_remote_addr);
@@ -339,7 +343,7 @@ session_init(struct vsf_session* p_sess)
   /* If anonymous mode is active, fetch the uid of the anonymous user */
   if (tunable_anonymous_enable)
   {
-    const struct vsf_sysutil_user* p_user = 0;
+    _Ptr<const struct vsf_sysutil_user> p_user = 0;
     if (tunable_ftp_username)
     {
       p_user = vsf_sysutil_getpwnam(tunable_ftp_username);
@@ -353,7 +357,7 @@ session_init(struct vsf_session* p_sess)
   }
   if (tunable_guest_enable)
   {
-    const struct vsf_sysutil_user* p_user = 0;
+    _Ptr<const struct vsf_sysutil_user> p_user = 0;
     if (tunable_guest_username)
     {
       p_user = vsf_sysutil_getpwnam(tunable_guest_username);
@@ -367,7 +371,7 @@ session_init(struct vsf_session* p_sess)
   }
   if (tunable_chown_uploads)
   {
-    const struct vsf_sysutil_user* p_user = 0;
+    _Ptr<const struct vsf_sysutil_user> p_user = 0;
     if (tunable_chown_username)
     {
       p_user = vsf_sysutil_getpwnam(tunable_chown_username);
