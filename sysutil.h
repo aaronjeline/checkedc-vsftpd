@@ -151,6 +151,8 @@ _Itype_for_any(T) void vsf_sysutil_memunmap(void* p_start : itype(_Array_ptr<T>)
 _Itype_for_any(T) void* vsf_sysutil_malloc(unsigned int size) : itype(_Array_ptr<T>) byte_count(size);
 _Itype_for_any(T) void* vsf_sysutil_realloc(void* p_ptr : itype(_Array_ptr<T>) byte_count(0), unsigned int size) : itype(_Array_ptr<T>) byte_count(size);
 _Itype_for_any(T) void vsf_sysutil_free(void* p_ptr : itype(_Array_ptr<T>) byte_count(0));
+_Itype_for_any(T) void vsf_sysutil_free_ptr(void *p_ptr : itype(_Ptr<T>));
+
 
 /* Process creation/exit/process handling */
 unsigned int vsf_sysutil_getpid(void);

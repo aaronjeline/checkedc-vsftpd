@@ -16,6 +16,8 @@
 #include "readwrite.h"
 #include "defs.h"
 
+#pragma CHECKED_SCOPE on
+
 void
 ssl_slave(struct vsf_session* p_sess)
 {
@@ -92,9 +94,14 @@ ssl_slave(struct vsf_session* p_sess)
         bug("invalid state");
       }
       priv_sock_get_str(p_sess->ssl_slave_fd, &data_str);
+      unsigned int len = str_getlen(&data_str);
+      _Array_ptr<char> str_buf : count(len) = 0;
+      _Unchecked {
+        str_buf = _Assume_bounds_cast<_Array_ptr<char>>(str_getbuf(&data_str), count(len));
+      }
       ret = ssl_write(p_sess->p_data_ssl,
-                      str_getbuf(&data_str),
-                      str_getlen(&data_str));
+                      str_buf,
+                      len);
       priv_sock_send_int(p_sess->ssl_slave_fd, ret);
     }
     else if (cmd == PRIV_SOCK_DO_SSL_CLOSE)

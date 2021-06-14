@@ -541,6 +541,11 @@ vsf_sysutil_free(void* p_ptr)
   free(p_ptr);
 }
 
+void
+vsf_sysutil_free_ptr(void *p_ptr) {
+  vsf_sysutil_free(p_ptr);
+}
+
 unsigned int
 vsf_sysutil_getpid(void)
 {

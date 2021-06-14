@@ -20,6 +20,8 @@
 
 #include <sys/syslog.h>
 
+#pragma CHECKED_SCOPE on
+
 int deny_severity = LOG_WARNING;
 int allow_severity = LOG_INFO;
 

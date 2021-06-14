@@ -67,7 +67,8 @@ vsf_secbuf_alloc(struct secbuf *buf : itype(_Ptr<struct secbuf>))
   buf->map_offset = p_mmap_offset;
   _Unchecked {
     // I can't figure out how to get it to accept this bound.
-    buf->p_ptr = _Assume_bounds_cast<_Array_ptr<char>>(p_mmap + buf->map_offset, bounds(buf->p_ptr - buf->map_offset, buf->p_ptr + buf -> size));
+    buf->p_ptr = _Assume_bounds_cast<_Array_ptr<char>>(p_mmap + buf->map_offset, bounds(buf->p_ptr, buf->p_ptr + buf->size));
+    buf->internal_p_ptr = _Assume_bounds_cast<_Array_ptr<char>>(buf->p_ptr, bounds(buf->internal_p_ptr - buf->map_offset, buf->internal_p_ptr + buf -> size));
   }
 }
 
@@ -81,6 +82,6 @@ vsf_secbuf_free(struct secbuf *buf : itype(_Ptr<struct secbuf>))
 
   /* Lose the mapping */
   unsigned int size = buf->map_offset + buf->size;
-  _Array_ptr<char> tmp : count(size) = _Dynamic_bounds_cast<_Array_ptr<char>>(buf->p_ptr - buf->map_offset, count(size));
+  _Array_ptr<char> tmp : count(size) = _Dynamic_bounds_cast<_Array_ptr<char>>(buf->internal_p_ptr - buf->map_offset, count(size));
   vsf_sysutil_memunmap<char>(tmp, size);
 }

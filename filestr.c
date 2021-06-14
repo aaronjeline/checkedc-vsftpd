@@ -16,13 +16,15 @@
 #include "secbuf.h"
 #include "utility.h"
 
+#pragma CHECKED_SCOPE on
+
 int
-str_fileread(struct mystr* p_str, const char* p_filename, unsigned int maxsize)
+str_fileread(struct mystr *p_str : itype(_Ptr<struct mystr>), const char *p_filename : itype(_Nt_array_ptr<const char>), unsigned int maxsize)
 {
   int fd;
   int retval = 0;
   struct secbuf sec_buf = {};
-  struct vsf_sysutil_statbuf* p_stat = 0;
+  _Ptr<struct vsf_sysutil_statbuf> p_stat = 0;
   /* In case we fail, make sure we return an empty string */
   str_empty(p_str);
   fd = vsf_sysutil_open_file(p_filename, kVSFSysUtilOpenReadOnly);
@@ -40,7 +42,7 @@ str_fileread(struct mystr* p_str, const char* p_filename, unsigned int maxsize)
     }
     vsf_secbuf_alloc(&sec_buf);
 
-    retval = vsf_sysutil_read_loop(fd, sec_buf.p_ptr, (unsigned int) sec_buf.size);
+    retval = vsf_sysutil_read_loop<char>(fd, sec_buf.p_ptr, (unsigned int) sec_buf.size);
     if (vsf_sysutil_retval_is_error(retval))
     {
       goto free_out;
@@ -52,7 +54,7 @@ str_fileread(struct mystr* p_str, const char* p_filename, unsigned int maxsize)
     str_alloc_memchunk(p_str, sec_buf.p_ptr, (unsigned int) sec_buf.size);
   }
 free_out:
-  vsf_sysutil_free(p_stat);
+  vsf_sysutil_free_ptr<struct vsf_sysutil_statbuf>(p_stat);
   vsf_secbuf_free(&sec_buf);
   vsf_sysutil_close(fd);
   return retval;

@@ -11,8 +11,10 @@
 #include "ftpcmdio.h"
 #include "session.h"
 
+#pragma CHECKED_SCOPE on
+
 void
-handle_opts(struct vsf_session* p_sess)
+handle_opts(struct vsf_session *p_sess : itype(_Ptr<struct vsf_session>))
 {
   str_upper(&p_sess->ftp_arg_str);
   if (str_equal_text(&p_sess->ftp_arg_str, "UTF8 ON"))

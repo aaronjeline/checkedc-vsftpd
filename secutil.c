@@ -12,13 +12,12 @@
 #include "utility.h"
 #include "sysdeputil.h"
 
+#pragma CHECKED_SCOPE on
+
 void
-vsf_secutil_change_credentials(const struct mystr* p_user_str,
-                               const struct mystr* p_dir_str,
-                               const struct mystr* p_ext_dir_str,
-                               unsigned int caps, unsigned int options)
+vsf_secutil_change_credentials(const struct mystr *p_user_str : itype(_Ptr<const struct mystr>), const struct mystr *p_dir_str : itype(_Ptr<const struct mystr>), const struct mystr *p_ext_dir_str : itype(_Ptr<const struct mystr>), unsigned int caps, unsigned int options)
 {
-  struct vsf_sysutil_user* p_user;
+  _Ptr<struct vsf_sysutil_user> p_user = ((void *)0);
   if (!vsf_sysutil_running_as_root())
   {
     bug("vsf_secutil_change_credentials: not running as root");
@@ -26,14 +25,14 @@ vsf_secutil_change_credentials(const struct mystr* p_user_str,
   p_user = str_getpwnam(p_user_str);
   if (p_user == 0)
   {
-    die2("cannot locate user entry:", str_getbuf(p_user_str));
+    die2("cannot locate user entry:", ((_Nt_array_ptr<const char> )str_getbuf(p_user_str)));
   }
   {
     struct mystr dir_str = INIT_MYSTR;
     /* Work out where the chroot() jail is */
     if (p_dir_str == 0 || str_isempty(p_dir_str))
     {
-      str_alloc_text(&dir_str, vsf_sysutil_user_get_homedir(p_user));
+      str_alloc_text(&dir_str, ((_Nt_array_ptr<const char> )vsf_sysutil_user_get_homedir(p_user)));
     }
     else
     {
@@ -68,7 +67,7 @@ vsf_secutil_change_credentials(const struct mystr* p_user_str,
       retval = str_chdir(&dir_str);
       if (retval != 0)
       {
-        die2("cannot change directory:", str_getbuf(&dir_str));
+        die2("cannot change directory:", ((_Nt_array_ptr<const char> )str_getbuf(&dir_str)));
       }
       if (p_ext_dir_str && !str_isempty(p_ext_dir_str))
       {
@@ -83,7 +82,7 @@ vsf_secutil_change_credentials(const struct mystr* p_user_str,
       }
       if (retval != 0)
       {
-        die2("cannot change directory:", str_getbuf(p_ext_dir_str));
+        die2("cannot change directory:", ((_Nt_array_ptr<const char> )str_getbuf(p_ext_dir_str)));
       }
       if (options & VSF_SECUTIL_OPTION_CHANGE_EUID)
       {

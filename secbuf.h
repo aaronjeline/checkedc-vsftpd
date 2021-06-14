@@ -2,7 +2,11 @@
 #define VSF_SECBUF_H
 
 struct secbuf {
-  char *p_ptr : itype(_Array_ptr<char>) bounds(p_ptr - map_offset, p_ptr + size);
+  char *p_ptr : itype(_Array_ptr<char>) count(size);
+  // The negative offset bound doesn't interact well with checked c bounds
+  // checking, so p_ptr gives easy access to the count(size) array while
+  // internal_p_ptr has the bounds for the full allocated memory.
+  char *internal_p_ptr : itype(_Array_ptr<char>) bounds(p_ptr - map_offset, p_ptr + size);
   unsigned int size;
   unsigned int map_offset;
 };
@@ -11,7 +15,7 @@ struct secbuf {
 // free the buffer, but if the buffer is stored in a static variable
 // that is never deallocated, then this can be used for a simpler interface.
 #define vsf_secbuf_static_alloc(P, S) { \
-  _Ptr<struct secbuf> __tmp_secbuf = &(struct secbuf){(P), (S), 0}; \
+  _Ptr<struct secbuf> __tmp_secbuf = &(struct secbuf){(P), (P), (S), 0}; \
   vsf_secbuf_alloc(__tmp_secbuf); \
   P = __tmp_secbuf->p_ptr;}
 
