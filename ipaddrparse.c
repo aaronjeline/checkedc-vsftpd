@@ -18,8 +18,8 @@ static int ipv6_parse_main(struct mystr *p_out_str : itype(_Ptr<struct mystr>), 
 static int ipv6_parse_hex(struct mystr *p_out_str : itype(_Ptr<struct mystr>), const struct mystr *p_in_str : itype(_Ptr<const struct mystr>));
 static int ipv4_parse_dotquad(struct mystr *p_out_str : itype(_Ptr<struct mystr>), const struct mystr *p_in_str : itype(_Ptr<const struct mystr>));
 
-const unsigned char*
-vsf_sysutil_parse_ipv6(const struct mystr *p_str : itype(_Ptr<const struct mystr>)) : itype(_Nt_array_ptr<const unsigned char>)
+const unsigned char *
+vsf_sysutil_parse_ipv6(const struct mystr *p_str : itype(_Ptr<const struct mystr>)) : itype(_Array_ptr<const unsigned char>) count(sizeof(struct in6_addr))
 {
   static struct mystr s_ret = {};
   static struct mystr s_rhs_ret = {};
@@ -57,7 +57,7 @@ vsf_sysutil_parse_ipv6(const struct mystr *p_str : itype(_Ptr<const struct mystr
   return (_Nt_array_ptr<const unsigned char>) str_getbuf(&s_ret);
 }
 
-const unsigned char *vsf_sysutil_parse_ipv4(const struct mystr *p_str : itype(_Ptr<const struct mystr>)) : itype(_Array_ptr<const unsigned char>) count(4)
+const unsigned char *vsf_sysutil_parse_ipv4(const struct mystr *p_str : itype(_Ptr<const struct mystr>)) : itype(_Array_ptr<const unsigned char>) count(sizeof(struct in_addr))
 {
   static unsigned char items _Checked[4];
   return vsf_sysutil_parse_uchar_string_sep(p_str, '.', items, sizeof(items));

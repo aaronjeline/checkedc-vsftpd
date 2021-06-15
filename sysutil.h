@@ -7,6 +7,8 @@
 #include "filesize.h"
 #endif
 
+#include <netinet/in.h>
+
 /* Return value queries */
 int vsf_sysutil_retval_is_error(int retval);
 enum EVSFSysUtilError
@@ -209,8 +211,8 @@ void vsf_sysutil_sockaddr_alloc_ipv6(struct vsf_sysutil_sockaddr **p_sockptr : i
 void vsf_sysutil_sockaddr_clone(struct vsf_sysutil_sockaddr **p_sockptr : itype(_Ptr<_Ptr<struct vsf_sysutil_sockaddr>>), const struct vsf_sysutil_sockaddr *p_src : itype(_Ptr<const struct vsf_sysutil_sockaddr>));
 int vsf_sysutil_sockaddr_addr_equal(const struct vsf_sysutil_sockaddr *p1 : itype(_Ptr<const struct vsf_sysutil_sockaddr>), const struct vsf_sysutil_sockaddr *p2 : itype(_Ptr<const struct vsf_sysutil_sockaddr>));
 int vsf_sysutil_sockaddr_is_ipv6(const struct vsf_sysutil_sockaddr *p_sockaddr : itype(_Ptr<const struct vsf_sysutil_sockaddr>));
-void vsf_sysutil_sockaddr_set_ipv4addr(struct vsf_sysutil_sockaddr *p_sockptr : itype(_Ptr<struct vsf_sysutil_sockaddr>), const unsigned char *p_raw : itype(_Ptr<const unsigned char>));
-void vsf_sysutil_sockaddr_set_ipv6addr(struct vsf_sysutil_sockaddr *p_sockptr : itype(_Ptr<struct vsf_sysutil_sockaddr>), const unsigned char *p_raw : itype(_Ptr<const unsigned char>));
+void vsf_sysutil_sockaddr_set_ipv4addr(struct vsf_sysutil_sockaddr *p_sockptr : itype(_Ptr<struct vsf_sysutil_sockaddr>), const unsigned char *p_raw : itype(_Array_ptr<const unsigned char>) count(sizeof(struct in_addr)));
+void vsf_sysutil_sockaddr_set_ipv6addr(struct vsf_sysutil_sockaddr *p_sockptr : itype(_Ptr<struct vsf_sysutil_sockaddr>), const unsigned char *p_raw : itype(_Array_ptr<const unsigned char>) count(sizeof(struct in6_addr)));
 void vsf_sysutil_sockaddr_set_ipv6scope(struct vsf_sysutil_sockaddr *p_sockptr : itype(_Ptr<struct vsf_sysutil_sockaddr>), const int scope_id);
 int vsf_sysutil_sockaddr_get_ipv6scope(struct vsf_sysutil_sockaddr *p_sockptr : itype(_Ptr<struct vsf_sysutil_sockaddr>));
 void vsf_sysutil_sockaddr_set_any(struct vsf_sysutil_sockaddr *p_sockaddr : itype(_Ptr<struct vsf_sysutil_sockaddr>));
@@ -220,8 +222,8 @@ int vsf_sysutil_is_port_reserved(unsigned short port);
 int vsf_sysutil_get_ipsock(const struct vsf_sysutil_sockaddr *p_sockaddr : itype(_Ptr<const struct vsf_sysutil_sockaddr>));
 unsigned int vsf_sysutil_get_ipaddr_size(void);
 void* vsf_sysutil_sockaddr_get_raw_addr(struct vsf_sysutil_sockaddr *p_sockaddr : itype(_Ptr<struct vsf_sysutil_sockaddr>));
-const void* vsf_sysutil_sockaddr_ipv6_v4(const struct vsf_sysutil_sockaddr *p_sockaddr : itype(_Ptr<const struct vsf_sysutil_sockaddr>));
-const void* vsf_sysutil_sockaddr_ipv4_v6(const struct vsf_sysutil_sockaddr *p_sockaddr : itype(_Ptr<const struct vsf_sysutil_sockaddr>));
+const void* vsf_sysutil_sockaddr_ipv6_v4(const struct vsf_sysutil_sockaddr *p_sockaddr : itype(_Ptr<const struct vsf_sysutil_sockaddr>)) : itype(_Ptr<const void>);
+const void* vsf_sysutil_sockaddr_ipv4_v6(const struct vsf_sysutil_sockaddr *p_sockaddr : itype(_Ptr<const struct vsf_sysutil_sockaddr>)) : itype(_Ptr<const void>);
 int vsf_sysutil_get_ipv4_sock(void);
 int vsf_sysutil_get_ipv6_sock(void);
 struct vsf_sysutil_socketpair_retval
@@ -251,7 +253,7 @@ void vsf_sysutil_shutdown_read_failok(int fd);
 _Itype_for_any(T) int vsf_sysutil_recv_peek(const int fd, void* p_buf : itype(_Array_ptr<T>) byte_count(len), unsigned int len);
 
 const char *vsf_sysutil_inet_ntop(const struct vsf_sysutil_sockaddr *p_sockptr : itype(_Ptr<const struct vsf_sysutil_sockaddr>)) : itype(_Nt_array_ptr<const char>);
-const char *vsf_sysutil_inet_ntoa(const void* p_raw_addr) : itype(_Nt_array_ptr<const char>);
+const char *vsf_sysutil_inet_ntoa(const void* p_raw_addr : itype(_Ptr<const void>)) : itype(_Nt_array_ptr<const char>);
 int vsf_sysutil_inet_aton(const char *p_text : itype(_Nt_array_ptr<const char>), struct vsf_sysutil_sockaddr *p_addr : itype(_Ptr<struct vsf_sysutil_sockaddr>));
 
 /* User database queries etc. */
