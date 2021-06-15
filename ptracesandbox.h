@@ -37,7 +37,7 @@ void ptrace_sandbox_free(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_san
  * TODO
  * Only one call to this per sandbox object is supported at this time.
  */
-int ptrace_sandbox_launch_process(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>), void ((*p_func)(void *)) : itype(_Ptr<void (void *)>), void* p_arg);
+int ptrace_sandbox_launch_process(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>), void ((*p_func)(void *)) : itype(_Ptr<void (_Ptr<void>)>), void* p_arg : itype(_Ptr<void>));
 
 /* ptrace_sandbox_run_processes()
  * PURPOSE

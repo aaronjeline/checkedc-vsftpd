@@ -27,14 +27,16 @@
 #include "ftppolicy.h"
 #include "seccompsandbox.h"
 
-static void one_process_start(void* p_arg);
+#pragma CHECKED_SCOPE on
+
+static void one_process_start(_Ptr<void> p_arg);
 
 void
-vsf_one_process_start(struct vsf_session* p_sess)
+vsf_one_process_start(struct vsf_session* p_sess : itype(_Ptr<struct vsf_session>))
 {
   if (tunable_ptrace_sandbox)
   {
-    struct pt_sandbox* p_sandbox = ptrace_sandbox_alloc();
+    _Ptr<struct pt_sandbox> p_sandbox = ptrace_sandbox_alloc();
     if (p_sandbox == 0)
     {
       die("could not allocate sandbox (only works for 32-bit builds)");
@@ -42,7 +44,7 @@ vsf_one_process_start(struct vsf_session* p_sess)
     policy_setup(p_sandbox, p_sess);
     if (ptrace_sandbox_launch_process(p_sandbox,
                                       one_process_start,
-                                      (void*) p_sess) <= 0)
+                                      (_Ptr<void>) p_sess) <= 0)
     {
       die("could not launch sandboxed child");
     }
@@ -56,14 +58,17 @@ vsf_one_process_start(struct vsf_session* p_sess)
   }
   else
   {
-    one_process_start((void*) p_sess);
+    one_process_start((_Ptr<void>) p_sess);
   }
 }
 
 static void
-one_process_start(void* p_arg)
+one_process_start(_Ptr<void> p_arg)
 {
-  struct vsf_session* p_sess = (struct vsf_session*) p_arg;
+  _Ptr<struct vsf_session> p_sess = 0;
+  _Unchecked {
+    p_sess = _Assume_bounds_cast<_Ptr<struct vsf_session>>(p_arg);
+  }
   unsigned int caps = 0;
   if (tunable_chown_uploads)
   {
@@ -112,8 +117,7 @@ one_process_start(void* p_arg)
 }
 
 void
-vsf_one_process_login(struct vsf_session* p_sess,
-                      const struct mystr* p_pass_str)
+vsf_one_process_login(struct vsf_session *p_sess : itype(_Ptr<struct vsf_session>), const struct mystr *p_pass_str : itype(_Ptr<const struct mystr>))
 {
   enum EVSFPrivopLoginResult login_result =
     vsf_privop_do_login(p_sess, p_pass_str);
@@ -137,38 +141,38 @@ vsf_one_process_login(struct vsf_session* p_sess,
 }
 
 int
-vsf_one_process_get_priv_data_sock(struct vsf_session* p_sess)
+vsf_one_process_get_priv_data_sock(struct vsf_session *p_sess : itype(_Ptr<struct vsf_session>))
 {
   unsigned short port = vsf_sysutil_sockaddr_get_port(p_sess->p_port_sockaddr);
   return vsf_privop_get_ftp_port_sock(p_sess, port, 1);
 }
 
 void
-vsf_one_process_pasv_cleanup(struct vsf_session* p_sess)
+vsf_one_process_pasv_cleanup(struct vsf_session *p_sess : itype(_Ptr<struct vsf_session>))
 {
   vsf_privop_pasv_cleanup(p_sess);
 }
 
 int
-vsf_one_process_pasv_active(struct vsf_session* p_sess)
+vsf_one_process_pasv_active(struct vsf_session *p_sess : itype(_Ptr<struct vsf_session>))
 {
   return vsf_privop_pasv_active(p_sess);
 }
 
 unsigned short
-vsf_one_process_listen(struct vsf_session* p_sess)
+vsf_one_process_listen(struct vsf_session *p_sess : itype(_Ptr<struct vsf_session>))
 {
   return vsf_privop_pasv_listen(p_sess);
 }
 
 int
-vsf_one_process_get_pasv_fd(struct vsf_session* p_sess)
+vsf_one_process_get_pasv_fd(struct vsf_session *p_sess : itype(_Ptr<struct vsf_session>))
 {
   return vsf_privop_accept_pasv(p_sess);
 }
 
 void
-vsf_one_process_chown_upload(struct vsf_session* p_sess, int fd)
+vsf_one_process_chown_upload(struct vsf_session *p_sess : itype(_Ptr<struct vsf_session>), int fd)
 {
   vsf_privop_do_file_chown(p_sess, fd);
 }
