@@ -58,7 +58,7 @@ void vsf_sysutil_set_alarm(const unsigned int trigger_seconds);
 void vsf_sysutil_clear_alarm(void);
 
 /* Directory related things */
-char *vsf_sysutil_getcwd(char *p_dest : itype(_Nt_array_ptr<char>), const unsigned int buf_size) : itype(_Ptr<char>);
+char *vsf_sysutil_getcwd(char *p_dest : itype(_Nt_array_ptr<char>) count(buf_size), const unsigned int buf_size) : itype(_Nt_array_ptr<char>);
 int vsf_sysutil_mkdir(const char *p_dirname : itype(_Nt_array_ptr<const char>), const unsigned int mode);
 int vsf_sysutil_rmdir(const char *p_dirname : itype(_Nt_array_ptr<const char>));
 int vsf_sysutil_chdir(const char *p_dirname : itype(_Nt_array_ptr<const char>));
@@ -66,7 +66,7 @@ int vsf_sysutil_rename(const char *p_from : itype(_Nt_array_ptr<const char>), co
 char* vsf_sysutil_realpath(char const *path : itype(_Nt_array_ptr<const char>), int may_be_fresh) : itype(_Nt_array_ptr<char>);
 
 struct vsf_sysutil_dir;
-struct vsf_sysutil_dir *vsf_sysutil_opendir(const char *p_dirname : itype(_Ptr<const char>)) : itype(_Ptr<struct vsf_sysutil_dir>);
+struct vsf_sysutil_dir *vsf_sysutil_opendir(const char *p_dirname : itype(_Nt_array_ptr<const char>)) : itype(_Ptr<struct vsf_sysutil_dir>);
 void vsf_sysutil_closedir(struct vsf_sysutil_dir *p_dir : itype(_Ptr<struct vsf_sysutil_dir>));
 const char *vsf_sysutil_next_dirent(struct vsf_sysutil_dir *p_dir : itype(_Ptr<struct vsf_sysutil_dir>)) : itype(_Nt_array_ptr<const char>);
 
