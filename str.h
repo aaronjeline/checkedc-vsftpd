@@ -9,9 +9,9 @@
 
 struct mystr
 {
-  char* PRIVATE_HANDS_OFF_p_buf : itype(_Array_ptr<char>) count(PRIVATE_HANDS_OFF_alloc_bytes);
+  char* PRIVATE_HANDS_OFF_p_buf : itype(_Nt_array_ptr<char>) count(PRIVATE_HANDS_OFF_alloc_bytes);
   /* Internally, EXCLUDES trailing null */
-  unsigned int PRIVATE_HANDS_OFF_len;
+  unsigned int PRIVATE_HANDS_OFF_len; 
   unsigned int PRIVATE_HANDS_OFF_alloc_bytes;
 };
 
@@ -25,7 +25,7 @@ void private_str_alloc_memchunk(struct mystr *p_str : itype(_Ptr<struct mystr>),
 
 void str_alloc_text(struct mystr *p_str : itype(_Ptr<struct mystr>), const char *p_src : itype(_Nt_array_ptr<const char>));
 /* NOTE: String buffer data does NOT include terminating character */
-void str_alloc_alt_term(struct mystr *p_str : itype(_Ptr<struct mystr>), const char *p_src : itype(_Array_ptr<const char>), char term);
+void str_alloc_alt_term(struct mystr *p_str : itype(_Ptr<struct mystr>), const char *p_src : itype(_Array_ptr<const char>) count(len), char term, unsigned int len);
 void str_alloc_ulong(struct mystr *p_str : itype(_Ptr<struct mystr>), unsigned long the_ulong);
 void str_alloc_filesize_t(struct mystr *p_str : itype(_Ptr<struct mystr>), filesize_t the_filesize);
 void str_copy(struct mystr *p_dest : itype(_Ptr<struct mystr>), const struct mystr *p_src : itype(_Ptr<const struct mystr>));
@@ -38,7 +38,7 @@ void str_reserve(struct mystr *p_str : itype(_Ptr<struct mystr>), unsigned int r
 
 int str_isempty(const struct mystr *p_str : itype(_Ptr<const struct mystr>));
 unsigned int str_getlen(const struct mystr *p_str : itype(_Ptr<const struct mystr>));
-const char* str_getbuf(const struct mystr *p_str : itype(_Ptr<const struct mystr>)) : itype(_Nt_array_ptr<const char>);
+const char* str_getbuf(const struct mystr *p_str : itype(_Ptr<const struct mystr>)) : itype(_Nt_array_ptr<const char>) count(p_str->PRIVATE_HANDS_OFF_len);
 
 int str_strcmp(const struct mystr *p_str1 : itype(_Ptr<const struct mystr>), const struct mystr *p_str2 : itype(_Ptr<const struct mystr>));
 int str_equal(const struct mystr *p_str1 : itype(_Ptr<const struct mystr>), const struct mystr *p_str2 : itype(_Ptr<const struct mystr>));

@@ -65,7 +65,7 @@ str_netfd_alloc(struct vsf_session *p_sess : itype(_Ptr<struct vsf_session>), st
         {
           die("missing terminator in str_netfd_alloc");
         }
-        str_alloc_alt_term(p_str, p_readbuf, term);
+        str_alloc_alt_term(p_str, p_readbuf, term, maxlen);
         return (int) i;
       }
     }
