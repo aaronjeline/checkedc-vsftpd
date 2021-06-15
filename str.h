@@ -55,7 +55,7 @@ void str_upper(struct mystr *p_str : itype(_Ptr<struct mystr>));
 void str_rpad(struct mystr *p_str : itype(_Ptr<struct mystr>), const unsigned int min_width);
 void str_lpad(struct mystr *p_str : itype(_Ptr<struct mystr>), const unsigned int min_width);
 void str_replace_char(struct mystr *p_str : itype(_Ptr<struct mystr>), char from, char to);
-void str_replace_text(struct mystr *p_str : itype(_Ptr<struct mystr>), const char *p_from : itype(_Nt_array_ptr<const char>) count(1), const char *p_to : itype(_Nt_array_ptr<const char>));
+void str_replace_text(struct mystr *p_str : itype(_Ptr<struct mystr>), const char *p_from : itype(_Nt_array_ptr<const char>), const char *p_to : itype(_Nt_array_ptr<const char>));
 
 void str_split_char(struct mystr *p_src : itype(_Ptr<struct mystr>), struct mystr *p_rhs : itype(_Ptr<struct mystr>), char c);
 void str_split_char_reverse(struct mystr *p_src : itype(_Ptr<struct mystr>), struct mystr *p_rhs : itype(_Ptr<struct mystr>), char c);

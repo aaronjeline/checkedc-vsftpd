@@ -391,7 +391,7 @@ str_replace_char(struct mystr *p_str : itype(_Ptr<struct mystr>), char from, cha
 }
 
 void
-str_replace_text(struct mystr *p_str : itype(_Ptr<struct mystr>), const char *p_from : itype(_Nt_array_ptr<const char>) count(1), const char *p_to : itype(_Nt_array_ptr<const char>))
+str_replace_text(struct mystr *p_str : itype(_Ptr<struct mystr>), const char *p_from : itype(_Nt_array_ptr<const char>), const char *p_to : itype(_Nt_array_ptr<const char>))
 {
   static struct mystr s_lhs_chunk_str = {};
   static struct mystr s_rhs_chunk_str = {};
