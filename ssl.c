@@ -22,6 +22,7 @@
 #include "builddefs.h"
 #include "logging.h"
 
+
 #ifdef VSF_BUILD_SSL
 
 #include <openssl/ssl.h>
@@ -720,39 +721,41 @@ ssl_add_entropy(struct vsf_session* p_sess)
 
 #else /* VSF_BUILD_SSL */
 
+#pragma CHECKED_SCOPE on
+
 void
-ssl_init(struct vsf_session* p_sess)
+ssl_init(struct vsf_session *p_sess : itype(_Ptr<struct vsf_session>))
 {
   (void) p_sess;
   die("SSL: ssl_enable is set but SSL support not compiled in");
 }
 
 void
-ssl_control_handshake(struct vsf_session* p_sess)
+ssl_control_handshake(struct vsf_session *p_sess : itype(_Ptr<struct vsf_session>))
 {
   (void) p_sess;
 }
 
 void
-handle_auth(struct vsf_session* p_sess)
+handle_auth(struct vsf_session *p_sess : itype(_Ptr<struct vsf_session>))
 {
   (void) p_sess;
 }
 
 void
-handle_pbsz(struct vsf_session* p_sess)
+handle_pbsz(struct vsf_session *p_sess : itype(_Ptr<struct vsf_session>))
 {
   (void) p_sess;
 }
 
 void
-handle_prot(struct vsf_session* p_sess)
+handle_prot(struct vsf_session *p_sess : itype(_Ptr<struct vsf_session>))
 {
   (void) p_sess;
 }
 
 int
-ssl_read(struct vsf_session* p_sess, void* p_ssl, char* p_buf, unsigned int len)
+ssl_read(struct vsf_session *p_sess : itype(_Ptr<struct vsf_session>), void* p_ssl : itype(_Ptr<void>), char *p_buf : itype(_Array_ptr<char>) count(len), unsigned int len)
 {
   (void) p_sess;
   (void) p_ssl;
@@ -762,7 +765,7 @@ ssl_read(struct vsf_session* p_sess, void* p_ssl, char* p_buf, unsigned int len)
 }
 
 int
-ssl_peek(struct vsf_session* p_sess, void* p_ssl, char* p_buf, unsigned int len)
+ssl_peek(struct vsf_session *p_sess : itype(_Ptr<struct vsf_session>), void* p_ssl : itype(_Ptr<void>), char *p_buf : itype(_Array_ptr<char>) count(len), unsigned int len)
 {
   (void) p_sess;
   (void) p_ssl;
@@ -772,7 +775,7 @@ ssl_peek(struct vsf_session* p_sess, void* p_ssl, char* p_buf, unsigned int len)
 }
 
 int
-ssl_write(void* p_ssl, const char* p_buf, unsigned int len)
+ssl_write(void* p_ssl : itype(_Ptr<void>), const char *p_buf : itype(_Array_ptr<const char>) count(len), unsigned int len)
 {
   (void) p_ssl;
   (void) p_buf;
@@ -781,7 +784,7 @@ ssl_write(void* p_ssl, const char* p_buf, unsigned int len)
 }
 
 int
-ssl_write_str(void* p_ssl, const struct mystr* p_str)
+ssl_write_str(void* p_ssl : itype(_Ptr<void>), const struct mystr *p_str : itype(_Ptr<const struct mystr>))
 {
   (void) p_ssl;
   (void) p_str;
@@ -789,7 +792,7 @@ ssl_write_str(void* p_ssl, const struct mystr* p_str)
 }
 
 int
-ssl_accept(struct vsf_session* p_sess, int fd)
+ssl_accept(struct vsf_session *p_sess : itype(_Ptr<struct vsf_session>), int fd)
 {
   (void) p_sess;
   (void) fd;
@@ -797,38 +800,38 @@ ssl_accept(struct vsf_session* p_sess, int fd)
 }
 
 int
-ssl_data_close(struct vsf_session* p_sess)
+ssl_data_close(struct vsf_session *p_sess : itype(_Ptr<struct vsf_session>))
 {
   (void) p_sess;
   return 1;
 }
 
 void
-ssl_comm_channel_init(struct vsf_session* p_sess)
+ssl_comm_channel_init(struct vsf_session *p_sess : itype(_Ptr<struct vsf_session>))
 {
   (void) p_sess;
 }
 
 void
-ssl_comm_channel_set_consumer_context(struct vsf_session* p_sess)
+ssl_comm_channel_set_consumer_context(struct vsf_session *p_sess : itype(_Ptr<struct vsf_session>))
 {
   (void) p_sess;
 }
 
 void
-ssl_comm_channel_set_producer_context(struct vsf_session* p_sess)
+ssl_comm_channel_set_producer_context(struct vsf_session *p_sess : itype(_Ptr<struct vsf_session>))
 {
   (void) p_sess;
 }
 
 void
-ssl_add_entropy(struct vsf_session* p_sess)
+ssl_add_entropy(struct vsf_session *p_sess : itype(_Ptr<struct vsf_session>))
 {
   (void) p_sess;
 }
 
 int
-ssl_read_into_str(struct vsf_session* p_sess, void* p_ssl, struct mystr* p_str)
+ssl_read_into_str(struct vsf_session *p_sess : itype(_Ptr<struct vsf_session>), void* p_ssl : itype(_Ptr<void>), struct mystr *p_str : itype(_Ptr<struct mystr>))
 {
   (void) p_sess;
   (void) p_ssl;
