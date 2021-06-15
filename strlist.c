@@ -15,6 +15,7 @@
 #include "utility.h"
 #include "sysutil.h"
 
+#pragma CHECKED_SCOPE on
 struct mystr_list_node
 {
   struct mystr str;
@@ -26,12 +27,12 @@ static const unsigned int kMaxStrlist = 10 * 1000 * 1000;
 
 static struct mystr s_null_str;
 
-static int sort_compare_func(const void* p1, const void* p2);
-static int sort_compare_func_reverse(const void* p1, const void* p2);
-static int sort_compare_common(const void* p1, const void* p2, int reverse);
+static int sort_compare_func(_Ptr<const struct mystr_list_node> p1, _Ptr<const struct mystr_list_node> p2);
+static int sort_compare_func_reverse(_Ptr<const struct mystr_list_node> p1,  _Ptr<const struct mystr_list_node> p2);
+static int sort_compare_common(_Ptr<const struct mystr_list_node> p1, _Ptr<const struct mystr_list_node> p2, int reverse);
 
 void
-str_list_free(struct mystr_list* p_list)
+str_list_free(struct mystr_list *p_list : itype(_Ptr<struct mystr_list>))
 {
   unsigned int i;
   for (i=0; i < p_list->list_len; ++i)
@@ -43,20 +44,19 @@ str_list_free(struct mystr_list* p_list)
   p_list->alloc_len = 0;
   if (p_list->p_nodes)
   {
-    vsf_sysutil_free(p_list->p_nodes);
+    vsf_sysutil_free<struct mystr_list_node>(p_list->p_nodes);
     p_list->p_nodes = 0;
   }
 }
 
 unsigned int
-str_list_get_length(const struct mystr_list* p_list)
+str_list_get_length(const struct mystr_list *p_list : itype(_Ptr<const struct mystr_list>))
 {
   return p_list->list_len;
 }
 
 int
-str_list_contains_str(const struct mystr_list* p_list,
-                      const struct mystr* p_str)
+str_list_contains_str(const struct mystr_list *p_list : itype(_Ptr<const struct mystr_list>), const struct mystr *p_str : itype(_Ptr<const struct mystr>))
 {
   unsigned int i;
   for (i=0; i < p_list->list_len; ++i)
@@ -70,17 +70,15 @@ str_list_contains_str(const struct mystr_list* p_list,
 }
 
 void
-str_list_add(struct mystr_list* p_list, const struct mystr* p_str,
-             const struct mystr* p_sort_key_str)
+str_list_add(struct mystr_list *p_list : itype(_Ptr<struct mystr_list>), const struct mystr *p_str : itype(_Ptr<const struct mystr>), const struct mystr *p_sort_key_str : itype(_Ptr<const struct mystr>))
 {
-  struct mystr_list_node* p_node;
   /* Expand the node allocation if we have to */
   if (p_list->list_len == p_list->alloc_len)
   {
     if (p_list->alloc_len == 0)
     {
       p_list->alloc_len = 32;
-      p_list->p_nodes = vsf_sysutil_malloc(
+      p_list->p_nodes = vsf_sysutil_malloc<struct mystr_list_node>(
           p_list->alloc_len * (unsigned int) sizeof(struct mystr_list_node));
     }
     else
@@ -90,57 +88,64 @@ str_list_add(struct mystr_list* p_list, const struct mystr* p_str,
       {
         die("excessive strlist");
       }
-      p_list->p_nodes = vsf_sysutil_realloc(
+      p_list->p_nodes = vsf_sysutil_realloc<struct mystr_list_node>(
           p_list->p_nodes,
           p_list->alloc_len * (unsigned int) sizeof(struct mystr_list_node));
     }
   }
-  p_node = &p_list->p_nodes[p_list->list_len];
-  p_node->str = s_null_str;
-  p_node->sort_key_str = s_null_str;
-  str_copy(&p_node->str, p_str);
+
+  _Array_ptr<struct mystr_list_node> nodes : count(p_list->list_len + 1) = _Dynamic_bounds_cast<_Array_ptr<struct mystr_list_node>>(p_list->p_nodes, count(p_list->list_len + 1));
+  nodes[p_list->list_len].str = s_null_str;
+  nodes[p_list->list_len].sort_key_str = s_null_str;
+  str_copy(&nodes[p_list->list_len].str, p_str);
   if (p_sort_key_str)
   {
-    str_copy(&p_node->sort_key_str, p_sort_key_str);
+    str_copy(&nodes[p_list->list_len].sort_key_str, p_sort_key_str);
   }
   p_list->list_len++;
 }
 
 void
-str_list_sort(struct mystr_list* p_list, int reverse)
+str_list_sort(struct mystr_list *p_list : itype(_Ptr<struct mystr_list>), int reverse)
 {
+  _Array_ptr<struct mystr_list_node> nodes : count(p_list->list_len) = _Dynamic_bounds_cast<_Array_ptr<struct mystr_list_node>>(p_list->p_nodes, count(p_list->list_len));
   if (!reverse)
   {
-    vsf_sysutil_qsort(p_list->p_nodes, p_list->list_len,
+    vsf_sysutil_qsort<struct mystr_list_node>(nodes, p_list->list_len,
                       sizeof(struct mystr_list_node), sort_compare_func);
   }
   else
   {
-    vsf_sysutil_qsort(p_list->p_nodes, p_list->list_len,
+    vsf_sysutil_qsort<struct mystr_list_node>(nodes, p_list->list_len,
                       sizeof(struct mystr_list_node),
-                      sort_compare_func_reverse);
+                      &sort_compare_func_reverse);
   }
 }
 
+
 static int
-sort_compare_func(const void* p1, const void* p2)
+sort_compare_func(_Ptr<const struct mystr_list_node> p1, _Ptr<const struct mystr_list_node> p2)
 {
   return sort_compare_common(p1, p2, 0);
 }
 
 static int
-sort_compare_func_reverse(const void* p1, const void* p2)
+sort_compare_func_reverse(_Ptr<const struct mystr_list_node> p1,  _Ptr<const struct mystr_list_node> p2)
 {
   return sort_compare_common(p1, p2, 1);
 }
 
 static int
-sort_compare_common(const void* p1, const void* p2, int reverse)
+sort_compare_common(_Ptr<const struct mystr_list_node> p1, _Ptr<const struct mystr_list_node> p2, int reverse)
 {
-  const struct mystr* p_cmp1;
-  const struct mystr* p_cmp2;
-  const struct mystr_list_node* p_node1 = (const struct mystr_list_node*) p1;
-  const struct mystr_list_node* p_node2 = (const struct mystr_list_node*) p2;
+  _Ptr<const struct mystr> p_cmp1 = ((void *)0);
+  _Ptr<const struct mystr> p_cmp2 = ((void *)0);
+  _Ptr<const struct mystr_list_node> p_node1 = 0;
+  _Ptr<const struct mystr_list_node> p_node2 = 0;
+  _Unchecked {
+    p_node1 = _Assume_bounds_cast<_Ptr<const struct mystr_list_node>>(p1);
+    p_node2 = _Assume_bounds_cast<_Ptr<const struct mystr_list_node>>(p2);
+  }
   if (!str_isempty(&p_node1->sort_key_str))
   {
     p_cmp1 = &p_node1->sort_key_str;
@@ -168,8 +173,7 @@ sort_compare_common(const void* p1, const void* p2, int reverse)
   }
 }
 
-const struct mystr*
-str_list_get_pstr(const struct mystr_list* p_list, unsigned int indexx)
+const struct mystr *str_list_get_pstr(const struct mystr_list *p_list : itype(_Ptr<const struct mystr_list>), unsigned int indexx) : itype(_Ptr<const struct mystr>)
 {
   if (indexx >= p_list->list_len)
   {
