@@ -48,7 +48,7 @@ void vsf_sysutil_install_sighandler(const enum EVSFSysUtilSignal sig, vsf_sighan
 void vsf_sysutil_install_async_sighandler(const enum EVSFSysUtilSignal sig,
                                           vsf_async_sighandle_t handler);
 void vsf_sysutil_default_sig(const enum EVSFSysUtilSignal sig);
-void vsf_sysutil_install_io_handler(vsf_context_io_t handler : itype(_Ptr<void (int, int, void*)>), void* p_private);
+void vsf_sysutil_install_io_handler(vsf_context_io_t handler : itype(_Ptr<void (int, int, _Ptr<void>)>), void* p_private : itype(_Ptr<void>));
 void vsf_sysutil_uninstall_io_handler(void);
 void vsf_sysutil_check_pending_actions(
   const enum EVSFSysUtilInterruptContext context, int retval, int fd);
