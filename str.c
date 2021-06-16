@@ -709,10 +709,7 @@ str_getline(const struct mystr *p_str : itype(_Ptr<const struct mystr>), struct 
   unsigned int start_pos = *p_pos;
   unsigned int curr_pos = start_pos;
   unsigned int buf_len = str_getlen(p_str);
-  _Nt_array_ptr<const char> p_buf : count(buf_len) = 0;
-  _Unchecked {
-    p_buf = _Assume_bounds_cast<_Nt_array_ptr<const char>>(str_getbuf(p_str), count(buf_len));
-  }
+  _Nt_array_ptr<const char> p_buf : count(buf_len) = _Dynamic_bounds_cast<_Nt_array_ptr<const char>>(str_getbuf(p_str), count(buf_len));
   unsigned int out_len;
   if (start_pos > buf_len)
   {
