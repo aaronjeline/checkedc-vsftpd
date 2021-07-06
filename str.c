@@ -28,13 +28,13 @@ static int str_equal_internal(const char *p_buf1 : itype(_Array_ptr<const char>)
 
 /* Private functions */
 static void
-s_setbuf(struct mystr *p_str : itype(_Ptr<struct mystr>), char *p_newbuf : itype(_Nt_array_ptr<char>) count(p_str->alloc_bytes))
+s_setbuf(struct mystr *p_str : itype(_Ptr<struct mystr>), char *p_newbuf : itype(_Nt_array_ptr<char>) count(len), unsigned int len)
 {
   if (p_str->p_buf != 0)
   {
     bug("p_buf not NULL when setting it");
   }
-  p_str->p_buf = p_newbuf;
+  p_str->alloc_bytes = len, p_str->p_buf = p_newbuf;
 }
 
 void
@@ -50,14 +50,13 @@ private_str_alloc_memchunk(struct mystr *p_str : itype(_Ptr<struct mystr>), cons
   if (buf_needed > p_str->alloc_bytes)
   {
     str_free(p_str);
-    p_str->alloc_bytes = buf_needed;
-    _Array_ptr<char> arr_buf : count(p_str->alloc_bytes + 1) = vsf_sysutil_malloc<char>(p_str->alloc_bytes + 1);
-    arr_buf[p_str->alloc_bytes] = '\0';
-    _Nt_array_ptr<char> nt_buf : count(p_str->alloc_bytes) = 0;
+    _Array_ptr<char> arr_buf : count(buf_needed + 1) = vsf_sysutil_malloc<char>(buf_needed + 1);
+    arr_buf[buf_needed] = '\0';
+    _Nt_array_ptr<char> nt_buf : count(buf_needed) = 0;
     _Unchecked {
-      nt_buf = (_Nt_array_ptr<char>) arr_buf;
+      nt_buf = _Assume_bounds_cast<_Nt_array_ptr<char>>(arr_buf, count(buf_needed));
     }
-    s_setbuf(p_str, nt_buf);
+    s_setbuf(p_str, nt_buf, buf_needed);
   }
   _Array_ptr<char> p_str_buf : count(len) = _Dynamic_bounds_cast<_Array_ptr<char>>(p_str->p_buf, count(len));
   vsf_sysutil_memcpy<char>(p_str_buf, p_src, len);
@@ -81,14 +80,13 @@ private_str_append_memchunk(struct mystr *p_str : itype(_Ptr<struct mystr>), con
   buf_needed++;
   if (buf_needed > p_str->alloc_bytes)
   {
-    p_str->alloc_bytes = buf_needed;
-    _Array_ptr<char> arr_buf : count(p_str->alloc_bytes + 1) = vsf_sysutil_realloc<char>(p_str->p_buf, p_str->alloc_bytes + 1);
-    arr_buf[p_str->alloc_bytes] = '\0';
-    _Nt_array_ptr<char> nt_buf : count(p_str->alloc_bytes) = 0;
+    _Array_ptr<char> arr_buf : count(buf_needed + 1) = vsf_sysutil_realloc<char>(p_str->p_buf, buf_needed + 1);
+    arr_buf[buf_needed] = '\0';
+    _Nt_array_ptr<char> nt_buf : count(buf_needed) = 0;
     _Unchecked {
-      nt_buf = (_Nt_array_ptr<char>) arr_buf;
+      nt_buf = _Assume_bounds_cast<_Nt_array_ptr<char>>(arr_buf, count(buf_needed));
     }
-    p_str->p_buf = nt_buf;
+    p_str->alloc_bytes = buf_needed, p_str->p_buf = nt_buf;
   }
   _Array_ptr<char> p_str_buf_end : count(len) = _Dynamic_bounds_cast<_Array_ptr<char>>(p_str->p_buf + p_str->len, count(len));
   vsf_sysutil_memcpy<char>(p_str_buf_end, p_src, len);
@@ -168,9 +166,8 @@ str_free(struct mystr *p_str : itype(_Ptr<struct mystr>))
   {
     vsf_sysutil_free<char>(p_str->p_buf);
   }
-  p_str->p_buf = 0;
+  p_str->alloc_bytes = 0, p_str->p_buf = 0;
   p_str->len = 0;
-  p_str->alloc_bytes = 0;
 }
 
 void
@@ -203,14 +200,13 @@ str_reserve(struct mystr *p_str : itype(_Ptr<struct mystr>), unsigned int res_le
   }
   if (res_len > p_str->alloc_bytes)
   {
-    p_str->alloc_bytes = res_len;
-    _Array_ptr<char> arr_buf : count(p_str->alloc_bytes + 1) = vsf_sysutil_realloc<char>(p_str->p_buf, p_str->alloc_bytes + 1);
-    arr_buf[p_str->alloc_bytes] = '\0';
-    _Nt_array_ptr<char> nt_buf : count(p_str->alloc_bytes) = 0;
+    _Array_ptr<char> arr_buf : count(res_len + 1) = vsf_sysutil_realloc<char>(p_str->p_buf, res_len + 1);
+    arr_buf[res_len] = '\0';
+    _Nt_array_ptr<char> nt_buf : count(res_len) = 0;
     _Unchecked {
-      nt_buf = (_Nt_array_ptr<char>) arr_buf;
+      nt_buf = _Assume_bounds_cast<_Nt_array_ptr<char>>(arr_buf, count(res_len));
     }
-    p_str->p_buf = nt_buf;
+    p_str->alloc_bytes = res_len, p_str->p_buf = nt_buf;
 
   }
   p_str->p_buf[res_len - 1] = '\0';

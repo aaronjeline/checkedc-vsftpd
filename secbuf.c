@@ -38,6 +38,7 @@ round_up_page_size(unsigned int buf_size) {
   return round_up;
 }
 
+#include<stdio.h>
 void
 vsf_secbuf_alloc(struct secbuf *buf : itype(_Ptr<struct secbuf>))
 {
@@ -47,16 +48,18 @@ vsf_secbuf_alloc(struct secbuf *buf : itype(_Ptr<struct secbuf>))
   /* Free any previous buffer */
   vsf_secbuf_free(buf);
 
-  unsigned int round_up = round_up_page_size(buf->size) _Where round_up >= page_size;
+  unsigned int round_up = round_up_page_size(buf->size);
 
-  _Array_ptr<char> p_mmap : count(round_up) = vsf_sysutil_map_anon_pages<char>(round_up);
+  _Array_ptr<char>  p_mmap : count(round_up) = vsf_sysutil_map_anon_pages<char>(round_up);
 
   /* Map the first and last page inaccessible */
-  _Array_ptr<char> p_mmap_last_page : count(page_size) = _Dynamic_bounds_cast<_Array_ptr<char>>(p_mmap + round_up - page_size, count(page_size));
-  vsf_sysutil_memprotect<char>(p_mmap_last_page, page_size, kVSFSysUtilMapProtNone);
+  unsigned int no_access_start = round_up - page_size;
+  _Array_ptr<char> p_no_access_page : bounds(p_mmap + no_access_start, p_mmap + round_up) = p_mmap + no_access_start;
+  _Array_ptr<char> p_no_access_page_page_size : count(page_size) = _Dynamic_bounds_cast<_Array_ptr<char>>(p_no_access_page, count(page_size));
+  vsf_sysutil_memprotect<char>(p_no_access_page_page_size, page_size, kVSFSysUtilMapProtNone);
 
-  _Array_ptr<char> p_mmap_page_size : count(page_size) = _Dynamic_bounds_cast<_Array_ptr<char>>(p_mmap, count(page_size));
-  vsf_sysutil_memprotect<char>(p_mmap_page_size, page_size, kVSFSysUtilMapProtNone);
+  _Array_ptr<char> p_no_access_page2 : count(page_size) = _Dynamic_bounds_cast<_Array_ptr<char>>(p_mmap, count(page_size));
+  vsf_sysutil_memprotect<char>(p_no_access_page2, page_size, kVSFSysUtilMapProtNone);
 
   unsigned int p_mmap_offset = page_size;
   if (page_offset)
@@ -64,12 +67,10 @@ vsf_secbuf_alloc(struct secbuf *buf : itype(_Ptr<struct secbuf>))
     p_mmap_offset += (page_size - page_offset);
   }
 
-  buf->map_offset = p_mmap_offset;
-  _Unchecked {
-    // I can't figure out how to get it to accept this bound.
-    buf->p_ptr = _Assume_bounds_cast<_Array_ptr<char>>(p_mmap + buf->map_offset, bounds(buf->p_ptr, buf->p_ptr + buf->size));
-    buf->internal_p_ptr = _Assume_bounds_cast<_Array_ptr<char>>(buf->p_ptr, bounds(buf->internal_p_ptr - buf->map_offset, buf->internal_p_ptr + buf -> size));
-  }
+  // Bounds casting required while porting to make assignments to struct fields work.
+  buf->map_offset = p_mmap_offset,
+    buf->p_ptr = _Dynamic_bounds_cast<_Array_ptr<char>>(p_mmap + p_mmap_offset, count(buf->size)),
+    buf->noaccess_page = _Dynamic_bounds_cast<_Array_ptr<char>>(p_mmap, bounds(buf->p_ptr - buf->map_offset, buf->p_ptr));
 }
 
 void
@@ -80,8 +81,14 @@ vsf_secbuf_free(struct secbuf *buf : itype(_Ptr<struct secbuf>))
     return;
   }
 
+  _Array_ptr<char> p_mmap_offset : bounds(buf->p_ptr - buf->map_offset, buf->p_ptr + buf->size) = buf->p_ptr - buf->map_offset;
+
+  /* First make the first page readable so we can get the size */
+  unsigned int page_size = vsf_sysutil_getpagesize();
+  _Array_ptr<char> p_mmap_offset_page_size : count(page_size) = _Dynamic_bounds_cast<_Array_ptr<char>>(p_mmap_offset, count(page_size));
+  vsf_sysutil_memprotect<char>(p_mmap_offset_page_size, page_size, kVSFSysUtilMapProtReadOnly);
+
   /* Lose the mapping */
-  unsigned int size = buf->map_offset + buf->size;
-  _Array_ptr<char> tmp : count(size) = _Dynamic_bounds_cast<_Array_ptr<char>>(buf->internal_p_ptr - buf->map_offset, count(size));
-  vsf_sysutil_memunmap<char>(tmp, size);
+  _Array_ptr<char> p_mmap_offset_full : count(buf->size + buf->map_offset) = _Dynamic_bounds_cast<_Array_ptr<char>>(p_mmap_offset, count(buf->size + buf->map_offset));
+  vsf_sysutil_memunmap<char>(p_mmap_offset_full, buf->size + buf->map_offset);
 }

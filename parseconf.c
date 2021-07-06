@@ -266,10 +266,15 @@ vsf_parseconf_load_setting(const char *p_setting : itype(_Nt_array_ptr<const cha
   static struct mystr s_setting_str = {};
   static struct mystr s_value_str = {};
   unsigned int i = 0;
-  _Nt_array_ptr<const char> tmp : count(i) = _Dynamic_bounds_cast<_Nt_array_ptr<const char>>(p_setting, count(i));
+  unsigned int len = vsf_sysutil_strlen(p_setting);
+  // FIXME: not sure the best way to do this without any warnings
+  _Nt_array_ptr<const char> tmp : count(len)= 0;
+  _Unchecked {
+    tmp = _Assume_bounds_cast<_Nt_array_ptr<const char>>(p_setting, count(len));
+  }
   for (;tmp[i] != '\0' && vsf_sysutil_isspace(tmp[i]); i++) { }
 
-  str_alloc_text(&s_setting_str, tmp);
+  str_alloc_text(&s_setting_str, p_setting);
   str_split_char(&s_setting_str, &s_value_str, '=');
   /* Is it a string setting? */
   {

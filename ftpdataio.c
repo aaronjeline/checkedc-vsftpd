@@ -460,7 +460,7 @@ do_file_send_rwloop(struct vsf_session *p_sess : itype(_Ptr<struct vsf_session>)
   int prev_cr = 0;
   if (p_readbuf == 0)
   {
-    _Ptr<struct secbuf> __tmp_secbuf = &(struct secbuf){p_readbuf, p_readbuf, VSFTP_DATA_BUFSIZE, 0};
+    _Ptr<struct secbuf> __tmp_secbuf = &(struct secbuf){0, 0, VSFTP_DATA_BUFSIZE, 0};
     vsf_secbuf_alloc(__tmp_secbuf);
     p_readbuf = _Dynamic_bounds_cast<_Array_ptr<char>>(__tmp_secbuf->p_ptr, count(VSFTP_DATA_BUFSIZE));
   }
@@ -471,7 +471,7 @@ do_file_send_rwloop(struct vsf_session *p_sess : itype(_Ptr<struct vsf_session>)
       /* NOTE!! * 2 factor because we can double the data by doing our ASCII
        * linefeed mangling
        */
-    _Ptr<struct secbuf> __tmp_secbuf = &(struct secbuf){p_asciibuf, p_asciibuf, 2*VSFTP_DATA_BUFSIZE, 0};
+    _Ptr<struct secbuf> __tmp_secbuf = &(struct secbuf){0, 0, 2*VSFTP_DATA_BUFSIZE, 0};
     vsf_secbuf_alloc(__tmp_secbuf);
     p_asciibuf = _Dynamic_bounds_cast<_Array_ptr<char>>(__tmp_secbuf->p_ptr, count(2*VSFTP_DATA_BUFSIZE));
     }
@@ -597,7 +597,7 @@ do_file_recv(struct vsf_session *p_sess : itype(_Ptr<struct vsf_session>), int f
      * last buffer fragment eneded in a '\r' and the current buffer fragment
      * does not start with a '\n'.
      */
-    _Ptr<struct secbuf> __tmp_secbuf = &(struct secbuf){p_recvbuf, p_recvbuf, VSFTP_DATA_BUFSIZE + 1, 0};
+    _Ptr<struct secbuf> __tmp_secbuf = &(struct secbuf){0, 0, VSFTP_DATA_BUFSIZE + 1, 0};
     vsf_secbuf_alloc(__tmp_secbuf);
     p_recvbuf = _Dynamic_bounds_cast<_Array_ptr<char>>(__tmp_secbuf->p_ptr, count(VSFTP_DATA_BUFSIZE + 1));
   }

@@ -216,7 +216,7 @@ control_getline(struct mystr *p_str : itype(_Ptr<struct mystr>), struct vsf_sess
   int ret;
   if (p_sess->p_control_line_buf == 0)
   {
-    _Ptr<struct secbuf> tmp_secbuf = &(struct secbuf){p_sess->p_control_line_buf, p_sess->p_control_line_buf, VSFTP_MAX_COMMAND_LINE, 0};
+    _Ptr<struct secbuf> tmp_secbuf = &(struct secbuf){0, 0, VSFTP_MAX_COMMAND_LINE, 0};
     vsf_secbuf_alloc(tmp_secbuf);
     p_sess->p_control_line_buf = _Dynamic_bounds_cast<_Array_ptr<char>>(tmp_secbuf->p_ptr, count(VSFTP_MAX_COMMAND_LINE));
   }

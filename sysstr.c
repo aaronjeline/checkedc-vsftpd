@@ -27,7 +27,7 @@ str_getcwd(struct mystr *p_str : itype(_Ptr<struct mystr>))
   {
     _Array_ptr<char> tmp : count(VSFTP_PATH_MAX + 1) = 0;
 
-    _Ptr<struct secbuf> __tmp_secbuf = &(struct secbuf){tmp, tmp, VSFTP_PATH_MAX + 1, 0};
+    _Ptr<struct secbuf> __tmp_secbuf = &(struct secbuf){0, 0, VSFTP_PATH_MAX + 1, 0};
     vsf_secbuf_alloc(__tmp_secbuf);
     tmp = _Dynamic_bounds_cast<_Array_ptr<char>>(__tmp_secbuf->p_ptr, count(VSFTP_PATH_MAX + 1));
 
@@ -166,7 +166,7 @@ str_readlink(struct mystr *p_str : itype(_Ptr<struct mystr>), const struct mystr
   {
     _Array_ptr<char> tmp : count(VSFTP_PATH_MAX + 1) = 0;
 
-    _Ptr<struct secbuf> __tmp_secbuf = &(struct secbuf){tmp, tmp, VSFTP_PATH_MAX + 1, 0};
+    _Ptr<struct secbuf> __tmp_secbuf = &(struct secbuf){0, 0, VSFTP_PATH_MAX + 1, 0};
     vsf_secbuf_alloc(__tmp_secbuf);
     tmp = _Dynamic_bounds_cast<_Array_ptr<char>>(__tmp_secbuf->p_ptr, count(VSFTP_PATH_MAX + 1));
 

@@ -35,11 +35,13 @@ str_fileread(struct mystr *p_str : itype(_Ptr<struct mystr>), const char *p_file
   vsf_sysutil_fstat(fd, &p_stat);
   if (vsf_sysutil_statbuf_is_regfile(p_stat))
   {
-    sec_buf.size = vsf_sysutil_statbuf_get_size(p_stat);
-    if (sec_buf.size > maxsize)
+    unsigned int secbuf_size = vsf_sysutil_statbuf_get_size(p_stat);
+    vsf_secbuf_free(&sec_buf);
+    if (secbuf_size > maxsize)
     {
-      sec_buf.size = maxsize;
+      secbuf_size = maxsize;
     }
+    sec_buf.size = secbuf_size, sec_buf.map_offset = 0, sec_buf.p_ptr = 0, sec_buf.noaccess_page = 0;
     vsf_secbuf_alloc(&sec_buf);
 
     retval = vsf_sysutil_read_loop<char>(fd, sec_buf.p_ptr, (unsigned int) sec_buf.size);

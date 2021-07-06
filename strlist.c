@@ -40,13 +40,13 @@ str_list_free(struct mystr_list *p_list : itype(_Ptr<struct mystr_list>))
     str_free(&p_list->p_nodes[i].str);
     str_free(&p_list->p_nodes[i].sort_key_str);
   }
-  p_list->list_len = 0;
-  p_list->alloc_len = 0;
   if (p_list->p_nodes)
   {
     vsf_sysutil_free<struct mystr_list_node>(p_list->p_nodes);
-    p_list->p_nodes = 0;
   }
+  p_list->list_len = 0;
+  p_list->alloc_len = 0, p_list->p_nodes = 0;
+
 }
 
 unsigned int
@@ -77,31 +77,37 @@ str_list_add(struct mystr_list *p_list : itype(_Ptr<struct mystr_list>), const s
   {
     if (p_list->alloc_len == 0)
     {
-      p_list->alloc_len = 32;
+      p_list->alloc_len = 32,
       p_list->p_nodes = vsf_sysutil_malloc<struct mystr_list_node>(
           p_list->alloc_len * (unsigned int) sizeof(struct mystr_list_node));
     }
     else
     {
-      p_list->alloc_len *= 2;
-      if (p_list->alloc_len > kMaxStrlist)
+      unsigned int new_len = p_list->alloc_len * 2;
+      if (new_len > kMaxStrlist)
       {
         die("excessive strlist");
       }
+      p_list->alloc_len = new_len,
       p_list->p_nodes = vsf_sysutil_realloc<struct mystr_list_node>(
           p_list->p_nodes,
           p_list->alloc_len * (unsigned int) sizeof(struct mystr_list_node));
     }
   }
 
-  _Array_ptr<struct mystr_list_node> nodes : count(p_list->list_len + 1) = _Dynamic_bounds_cast<_Array_ptr<struct mystr_list_node>>(p_list->p_nodes, count(p_list->list_len + 1));
-  nodes[p_list->list_len].str = s_null_str;
-  nodes[p_list->list_len].sort_key_str = s_null_str;
-  str_copy(&nodes[p_list->list_len].str, p_str);
-  if (p_sort_key_str)
+  // Opening a scope so that the compiler doesn't think incrementing list_len
+  // break bounds of nodes.
   {
-    str_copy(&nodes[p_list->list_len].sort_key_str, p_sort_key_str);
+    _Array_ptr<struct mystr_list_node> nodes : count(p_list->list_len + 1) = _Dynamic_bounds_cast<_Array_ptr<struct mystr_list_node>>(p_list->p_nodes, count(p_list->list_len + 1));
+    nodes[p_list->list_len].str = s_null_str;
+    nodes[p_list->list_len].sort_key_str = s_null_str;
+    str_copy(&nodes[p_list->list_len].str, p_str);
+    if (p_sort_key_str)
+    {
+      str_copy(&nodes[p_list->list_len].sort_key_str, p_sort_key_str);
+    }
   }
+
   p_list->list_len++;
 }
 
