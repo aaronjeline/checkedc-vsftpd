@@ -1372,8 +1372,8 @@ ptrace_sandbox_get_long(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sand
   return -1;
 }
 
-int
-ptrace_sandbox_get_buf(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>), unsigned long ptr, unsigned long len, void* p_buf : itype(_Ptr<void>))
+_Itype_for_any(T) int
+ptrace_sandbox_get_buf(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>), unsigned long ptr, unsigned long len, void* p_buf : itype(_Array_ptr<T>) byte_count(len))
 {
   (void) p_sandbox;
   (void) ptr;
