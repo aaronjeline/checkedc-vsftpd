@@ -109,7 +109,7 @@ int ptrace_sandbox_get_long(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_
  * RETURNS
  * 0 on success; otherwise it's a failure.
  */
-int ptrace_sandbox_get_buf(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>), unsigned long ptr, unsigned long len, void* p_buf);
+int ptrace_sandbox_get_buf(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>), unsigned long ptr, unsigned long len, void* p_buf : itype(_Ptr<void>));
 
 /* ptrace_sandbox_attach_point()
  * PURPOSE
@@ -198,15 +198,15 @@ void ptrace_sandbox_permit_ftruncate(struct pt_sandbox *p_sandbox : itype(_Ptr<s
 /* POLICY EDIT: permits socket() */
 void ptrace_sandbox_permit_socket(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>));
 /* POLICY EDIT: set validator for socket() */
-void ptrace_sandbox_set_socket_validator(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>), ptrace_sandbox_validator_t val : itype(_Ptr<int (_Ptr<struct pt_sandbox>, void *)>), void* p_arg);
+void ptrace_sandbox_set_socket_validator(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>), ptrace_sandbox_validator_t val : itype(_Ptr<int (_Ptr<struct pt_sandbox>, _Ptr<void> )>), void* p_arg : itype(_Ptr<void>));
 /* POLICY EDIT: permits bind() */
 void ptrace_sandbox_permit_bind(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>));
 /* POLICY EDIT: set validator for bind() */
-void ptrace_sandbox_set_bind_validator(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>), ptrace_sandbox_validator_t val : itype(_Ptr<int (_Ptr<struct pt_sandbox>, void *)>), void* p_arg);
+void ptrace_sandbox_set_bind_validator(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>), ptrace_sandbox_validator_t val : itype(_Ptr<int (_Ptr<struct pt_sandbox>, _Ptr<void> )>), void* p_arg : itype(_Ptr<void>));
 /* POLICY EDIT: permits connect() */
 void ptrace_sandbox_permit_connect(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>));
 /* POLICY EDIT: set validator for connect() */
-void ptrace_sandbox_set_connect_validator(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>), ptrace_sandbox_validator_t val : itype(_Ptr<int (_Ptr<struct pt_sandbox>, void *)>), void* p_arg);
+void ptrace_sandbox_set_connect_validator(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>), ptrace_sandbox_validator_t val : itype(_Ptr<int (_Ptr<struct pt_sandbox>, _Ptr<void> )>), void* p_arg : itype(_Ptr<void>));
 /* POLICY EDIT: permits listen() */
 void ptrace_sandbox_permit_listen(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>));
 /* POLICY EDIT: permits accept() */
@@ -214,11 +214,11 @@ void ptrace_sandbox_permit_accept(struct pt_sandbox *p_sandbox : itype(_Ptr<stru
 /* POLICY EDIT: permits setsockopt() */
 void ptrace_sandbox_permit_setsockopt(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>));
 /* POLICY EDIT: set validator for setsockopt() */
-void ptrace_sandbox_set_setsockopt_validator(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>), ptrace_sandbox_validator_t val : itype(_Ptr<int (_Ptr<struct pt_sandbox>, void *)>), void* p_arg);
+void ptrace_sandbox_set_setsockopt_validator(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>), ptrace_sandbox_validator_t val : itype(_Ptr<int (_Ptr<struct pt_sandbox>, _Ptr<void> )>), void* p_arg : itype(_Ptr<void>));
 /* POLICY EDIT: permits getsockopt() */
 void ptrace_sandbox_permit_getsockopt(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>));
 /* POLICY EDIT: set validator for getsockopt() */
-void ptrace_sandbox_set_getsockopt_validator(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>), ptrace_sandbox_validator_t val : itype(_Ptr<int (_Ptr<struct pt_sandbox>, void *)>), void* p_arg);
+void ptrace_sandbox_set_getsockopt_validator(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>), ptrace_sandbox_validator_t val : itype(_Ptr<int (_Ptr<struct pt_sandbox>, _Ptr<void> )>), void* p_arg : itype(_Ptr<void>));
 /* POLICY EDIT: permits shutdown() */
 void ptrace_sandbox_permit_shutdown(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>));
 

@@ -1136,22 +1136,21 @@ ptrace_sandbox_permit_shutdown(struct pt_sandbox* p_sandbox)
 
 #else /* __linux__ && __i386__ */
 
-struct pt_sandbox*
-ptrace_sandbox_alloc()
+#pragma CHECKED_SCOPE on
+
+struct pt_sandbox *ptrace_sandbox_alloc(void) : itype(_Ptr<struct pt_sandbox>)
 {
   return 0;
 }
 
 void
-ptrace_sandbox_free(struct pt_sandbox* p_sandbox)
+ptrace_sandbox_free(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>))
 {
   (void) p_sandbox;
 }
 
 int
-ptrace_sandbox_launch_process(struct pt_sandbox* p_sandbox,
-                              void (*p_func)(void*),
-                              void* p_arg)
+ptrace_sandbox_launch_process(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>), void ((*p_func)(void *)) : itype(_Ptr<void (_Ptr<void>)>), void* p_arg : itype(_Ptr<void>))
 {
   (void) p_sandbox;
   (void) p_func;
@@ -1160,7 +1159,7 @@ ptrace_sandbox_launch_process(struct pt_sandbox* p_sandbox,
 }
 
 int
-ptrace_sandbox_run_processes(struct pt_sandbox* p_sandbox)
+ptrace_sandbox_run_processes(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>))
 {
   (void) p_sandbox;
   return -1;
@@ -1172,184 +1171,182 @@ ptrace_sandbox_attach_point(void)
 }
 
 void
-ptrace_sandbox_permit_exit(struct pt_sandbox* p_sandbox)
+ptrace_sandbox_permit_exit(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>))
 {
   (void) p_sandbox;
 }
 
 void
-ptrace_sandbox_permit_read(struct pt_sandbox* p_sandbox)
+ptrace_sandbox_permit_read(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>))
 {
   (void) p_sandbox;
 }
 
 void
-ptrace_sandbox_permit_write(struct pt_sandbox* p_sandbox)
+ptrace_sandbox_permit_write(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>))
 {
   (void) p_sandbox;
 }
 
 void
-ptrace_sandbox_permit_sigaction(struct pt_sandbox* p_sandbox)
+ptrace_sandbox_permit_sigaction(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>))
 {
   (void) p_sandbox;
 }
 
 void
-ptrace_sandbox_permit_alarm(struct pt_sandbox* p_sandbox)
+ptrace_sandbox_permit_alarm(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>))
 {
   (void) p_sandbox;
 }
 
 void
-ptrace_sandbox_permit_query_time(struct pt_sandbox* p_sandbox)
+ptrace_sandbox_permit_query_time(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>))
 {
   (void) p_sandbox;
 }
 
 void
-ptrace_sandbox_permit_mmap(struct pt_sandbox* p_sandbox)
+ptrace_sandbox_permit_mmap(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>))
 {
   (void) p_sandbox;
 }
 
 void
-ptrace_sandbox_permit_mprotect(struct pt_sandbox* p_sandbox)
+ptrace_sandbox_permit_mprotect(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>))
 {
   (void) p_sandbox;
 }
 
 void
-ptrace_sandbox_permit_file_stats(struct pt_sandbox* p_sandbox)
+ptrace_sandbox_permit_file_stats(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>))
 {
   (void) p_sandbox;
 }
 
 void
-ptrace_sandbox_permit_fd_stats(struct pt_sandbox* p_sandbox)
+ptrace_sandbox_permit_fd_stats(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>))
 {
   (void) p_sandbox;
 }
 
 void
-ptrace_sandbox_permit_getcwd(struct pt_sandbox* p_sandbox)
+ptrace_sandbox_permit_getcwd(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>))
 {
   (void) p_sandbox;
 }
 
 void
-ptrace_sandbox_permit_chdir(struct pt_sandbox* p_sandbox)
+ptrace_sandbox_permit_chdir(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>))
 {
   (void) p_sandbox;
 }
 
 void
-ptrace_sandbox_permit_umask(struct pt_sandbox* p_sandbox)
+ptrace_sandbox_permit_umask(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>))
 {
   (void) p_sandbox;
 }
 
 void
-ptrace_sandbox_permit_open(struct pt_sandbox* p_sandbox, int writeable)
+ptrace_sandbox_permit_open(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>), int writeable)
 {
   (void) p_sandbox;
   (void) writeable;
 }
 
 void
-ptrace_sandbox_permit_close(struct pt_sandbox* p_sandbox)
+ptrace_sandbox_permit_close(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>))
 {
   (void) p_sandbox;
 }
 
 void
-ptrace_sandbox_permit_getdents(struct pt_sandbox* p_sandbox)
+ptrace_sandbox_permit_getdents(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>))
 {
   (void) p_sandbox;
 }
 
 void
-ptrace_sandbox_permit_fcntl(struct pt_sandbox* p_sandbox)
+ptrace_sandbox_permit_fcntl(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>))
 {
   (void) p_sandbox;
 }
 
 void
-ptrace_sandbox_permit_sendfile(struct pt_sandbox* p_sandbox)
+ptrace_sandbox_permit_sendfile(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>))
 {
   (void) p_sandbox;
 }
 
 void
-ptrace_sandbox_permit_seek(struct pt_sandbox* p_sandbox)
+ptrace_sandbox_permit_seek(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>))
 {
   (void) p_sandbox;
 }
 
 void
-ptrace_sandbox_permit_select(struct pt_sandbox* p_sandbox)
+ptrace_sandbox_permit_select(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>))
 {
   (void) p_sandbox;
 }
 
 void
-ptrace_sandbox_permit_unlink(struct pt_sandbox* p_sandbox)
+ptrace_sandbox_permit_unlink(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>))
 {
   (void) p_sandbox;
 }
 
 void
-ptrace_sandbox_permit_mkdir(struct pt_sandbox* p_sandbox)
+ptrace_sandbox_permit_mkdir(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>))
 {
   (void) p_sandbox;
 }
 
 void
-ptrace_sandbox_permit_rmdir(struct pt_sandbox* p_sandbox)
+ptrace_sandbox_permit_rmdir(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>))
 {
   (void) p_sandbox;
 }
 
 void
-ptrace_sandbox_permit_rename(struct pt_sandbox* p_sandbox)
+ptrace_sandbox_permit_rename(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>))
 {
   (void) p_sandbox;
 }
 
 void
-ptrace_sandbox_permit_utime(struct pt_sandbox* p_sandbox)
+ptrace_sandbox_permit_utime(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>))
 {
   (void) p_sandbox;
 }
 
 void
-ptrace_sandbox_permit_utimes(struct pt_sandbox* p_sandbox)
+ptrace_sandbox_permit_utimes(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>))
 {
   (void) p_sandbox;
 }
 
 void
-ptrace_sandbox_permit_sigreturn(struct pt_sandbox* p_sandbox)
+ptrace_sandbox_permit_sigreturn(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>))
 {
   (void) p_sandbox;
 }
 
 void
-ptrace_sandbox_permit_recv(struct pt_sandbox* p_sandbox)
+ptrace_sandbox_permit_recv(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>))
 {
   (void) p_sandbox;
 }
 
 void
-ptrace_sandbox_kill_processes(struct pt_sandbox* p_sandbox)
+ptrace_sandbox_kill_processes(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>))
 {
   (void) p_sandbox;
 }
 
 int
-ptrace_sandbox_get_arg(struct pt_sandbox* p_sandbox,
-                       int arg,
-                       unsigned long* p_out)
+ptrace_sandbox_get_arg(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>), int arg, unsigned long *p_out : itype(_Ptr<unsigned long>))
 {
   (void) p_sandbox;
   (void) arg;
@@ -1358,9 +1355,7 @@ ptrace_sandbox_get_arg(struct pt_sandbox* p_sandbox,
 }
 
 int
-ptrace_sandbox_get_socketcall_arg(struct pt_sandbox* p_sandbox,
-                                  int arg,
-                                  unsigned long* p_out)
+ptrace_sandbox_get_socketcall_arg(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>), int arg, unsigned long *p_out : itype(_Ptr<unsigned long>))
 {
   (void) p_sandbox;
   (void) arg;
@@ -1369,9 +1364,7 @@ ptrace_sandbox_get_socketcall_arg(struct pt_sandbox* p_sandbox,
 }
 
 int
-ptrace_sandbox_get_long(struct pt_sandbox* p_sandbox,
-                        unsigned long ptr,
-                        unsigned long* p_out)
+ptrace_sandbox_get_long(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>), unsigned long ptr, unsigned long *p_out : itype(_Ptr<unsigned long>))
 {
   (void) p_sandbox;
   (void) ptr;
@@ -1380,10 +1373,7 @@ ptrace_sandbox_get_long(struct pt_sandbox* p_sandbox,
 }
 
 int
-ptrace_sandbox_get_buf(struct pt_sandbox* p_sandbox,
-                       unsigned long ptr,
-                       unsigned long len,
-                       void* p_buf)
+ptrace_sandbox_get_buf(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>), unsigned long ptr, unsigned long len, void* p_buf : itype(_Ptr<void>))
 {
   (void) p_sandbox;
   (void) ptr;
@@ -1393,79 +1383,61 @@ ptrace_sandbox_get_buf(struct pt_sandbox* p_sandbox,
 }
 
 void
-ptrace_sandbox_permit_readlink(struct pt_sandbox* p_sandbox)
+ptrace_sandbox_permit_readlink(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>))
 {
   (void) p_sandbox;
 }
 
 void
-ptrace_sandbox_permit_brk(struct pt_sandbox* p_sandbox)
+ptrace_sandbox_permit_brk(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>))
 {
   (void) p_sandbox;
 }
 
 void
-ptrace_sandbox_permit_sleep(struct pt_sandbox* p_sandbox)
+ptrace_sandbox_permit_sleep(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>))
 {
   (void) p_sandbox;
 }
 
 void
-ptrace_sandbox_permit_fchmod(struct pt_sandbox* p_sandbox)
+ptrace_sandbox_permit_fchmod(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>))
 {
   (void) p_sandbox;
 }
 
 void
-ptrace_sandbox_permit_chmod(struct pt_sandbox* p_sandbox)
+ptrace_sandbox_permit_chmod(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>))
 {
   (void) p_sandbox;
 }
 
 void
-ptrace_sandbox_permit_fchown(struct pt_sandbox* p_sandbox)
+ptrace_sandbox_permit_fchown(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>))
 {
   (void) p_sandbox;
 }
 
 void
-ptrace_sandbox_permit_mremap(struct pt_sandbox* p_sandbox)
+ptrace_sandbox_permit_mremap(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>))
 {
   (void) p_sandbox;
 }
 
 void
-ptrace_sandbox_permit_ftruncate(struct pt_sandbox* p_sandbox)
+ptrace_sandbox_permit_ftruncate(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>))
 {
   (void) p_sandbox;
 }
 
 void
-ptrace_sandbox_permit_socket(struct pt_sandbox* p_sandbox)
+ptrace_sandbox_permit_socket(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>))
 {
   (void) p_sandbox;
 }
 
 void
-ptrace_sandbox_set_socket_validator(struct pt_sandbox* p_sandbox,
-                                    ptrace_sandbox_validator_t val,
-                                    void* p_arg)
-{
-  (void) p_sandbox;
-  (void) val;
-  (void) p_arg;
-}
-
-void
-ptrace_sandbox_permit_bind(struct pt_sandbox* p_sandbox)
-{
-  (void) p_sandbox;
-}
-
-void
-ptrace_sandbox_set_bind_validator(struct pt_sandbox* p_sandbox,
-                                  ptrace_sandbox_validator_t val,
-                                  void* p_arg)
+ptrace_sandbox_set_socket_validator(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>), ptrace_sandbox_validator_t val : itype(_Ptr<int (_Ptr<struct pt_sandbox>, _Ptr<void> )>), void* p_arg : itype(_Ptr<void>))
 {
   (void) p_sandbox;
   (void) val;
@@ -1473,43 +1445,13 @@ ptrace_sandbox_set_bind_validator(struct pt_sandbox* p_sandbox,
 }
 
 void
-ptrace_sandbox_permit_connect(struct pt_sandbox* p_sandbox)
+ptrace_sandbox_permit_bind(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>))
 {
   (void) p_sandbox;
 }
 
 void
-ptrace_sandbox_set_connect_validator(struct pt_sandbox* p_sandbox,
-                                     ptrace_sandbox_validator_t val,
-                                     void* p_arg)
-{
-  (void) p_sandbox;
-  (void) val;
-  (void) p_arg;
-}
-
-void
-ptrace_sandbox_permit_listen(struct pt_sandbox* p_sandbox)
-{
-  (void) p_sandbox;
-}
-
-void
-ptrace_sandbox_permit_accept(struct pt_sandbox* p_sandbox)
-{
-  (void) p_sandbox;
-}
-
-void
-ptrace_sandbox_permit_setsockopt(struct pt_sandbox* p_sandbox)
-{
-  (void) p_sandbox;
-}
-
-void
-ptrace_sandbox_set_setsockopt_validator(struct pt_sandbox* p_sandbox,
-                                        ptrace_sandbox_validator_t val,
-                                        void* p_arg)
+ptrace_sandbox_set_bind_validator(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>), ptrace_sandbox_validator_t val : itype(_Ptr<int (_Ptr<struct pt_sandbox>, _Ptr<void> )>), void* p_arg : itype(_Ptr<void>))
 {
   (void) p_sandbox;
   (void) val;
@@ -1517,15 +1459,13 @@ ptrace_sandbox_set_setsockopt_validator(struct pt_sandbox* p_sandbox,
 }
 
 void
-ptrace_sandbox_permit_getsockopt(struct pt_sandbox* p_sandbox)
+ptrace_sandbox_permit_connect(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>))
 {
   (void) p_sandbox;
 }
 
 void
-ptrace_sandbox_set_getsockopt_validator(struct pt_sandbox* p_sandbox,
-                                        ptrace_sandbox_validator_t val,
-                                        void* p_arg)
+ptrace_sandbox_set_connect_validator(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>), ptrace_sandbox_validator_t val : itype(_Ptr<int (_Ptr<struct pt_sandbox>, _Ptr<void> )>), void* p_arg : itype(_Ptr<void>))
 {
   (void) p_sandbox;
   (void) val;
@@ -1533,7 +1473,47 @@ ptrace_sandbox_set_getsockopt_validator(struct pt_sandbox* p_sandbox,
 }
 
 void
-ptrace_sandbox_permit_shutdown(struct pt_sandbox* p_sandbox)
+ptrace_sandbox_permit_listen(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>))
+{
+  (void) p_sandbox;
+}
+
+void
+ptrace_sandbox_permit_accept(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>))
+{
+  (void) p_sandbox;
+}
+
+void
+ptrace_sandbox_permit_setsockopt(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>))
+{
+  (void) p_sandbox;
+}
+
+void
+ptrace_sandbox_set_setsockopt_validator(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>), ptrace_sandbox_validator_t val : itype(_Ptr<int (_Ptr<struct pt_sandbox>, _Ptr<void> )>), void* p_arg : itype(_Ptr<void>))
+{
+  (void) p_sandbox;
+  (void) val;
+  (void) p_arg;
+}
+
+void
+ptrace_sandbox_permit_getsockopt(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>))
+{
+  (void) p_sandbox;
+}
+
+void
+ptrace_sandbox_set_getsockopt_validator(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>), ptrace_sandbox_validator_t val : itype(_Ptr<int (_Ptr<struct pt_sandbox>, _Ptr<void> )>), void* p_arg : itype(_Ptr<void>))
+{
+  (void) p_sandbox;
+  (void) val;
+  (void) p_arg;
+}
+
+void
+ptrace_sandbox_permit_shutdown(struct pt_sandbox *p_sandbox : itype(_Ptr<struct pt_sandbox>))
 {
   (void) p_sandbox;
 }
