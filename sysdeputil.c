@@ -226,11 +226,13 @@ int capset(cap_user_header_t header, const cap_user_data_t data)
 #include <unistd.h>
 #endif
 
+#pragma CHECKED_SCOPE on
+
 #ifdef VSF_SYSDEP_TRY_LINUX_SETPROCTITLE_HACK
-extern char** environ;
+extern char** environ : itype(_Nt_array_ptr<_Nt_array_ptr<char>>);;
 static unsigned int s_proctitle_space = 0;
 static int s_proctitle_inited = 0;
-static char* s_p_proctitle = 0;
+static _Array_ptr<char> s_p_proctitle : byte_count(s_proctitle_space) = 0;
 #endif
 
 #ifndef VSF_SYSDEP_HAVE_MAP_ANON
@@ -243,22 +245,19 @@ static int s_zero_fd = -1;
 /* File private functions/variables */
 static int do_sendfile(const int out_fd, const int in_fd,
                        unsigned int num_send, filesize_t start_pos);
-static void vsf_sysutil_setproctitle_internal(const char* p_text);
+static void vsf_sysutil_setproctitle_internal(_Nt_array_ptr<const char> p_text);
 static struct mystr s_proctitle_prefix_str;
 
 /* These two aren't static to avoid OpenBSD build warnings. */
-void vsf_insert_uwtmp(const struct mystr* p_user_str,
-                      const struct mystr* p_host_str);
+void vsf_insert_uwtmp(const struct mystr *p_user_str : itype(_Ptr<const struct mystr>), const struct mystr *p_host_str : itype(_Ptr<const struct mystr>));
 void vsf_remove_uwtmp(void);
 
 #ifndef VSF_SYSDEP_HAVE_PAM
 int
-vsf_sysdep_check_auth(struct mystr* p_user_str,
-                      const struct mystr* p_pass_str,
-                      const struct mystr* p_remote_host)
+vsf_sysdep_check_auth(struct mystr *p_user_str : itype(_Ptr<struct mystr>), const struct mystr *p_pass_str : itype(_Ptr<const struct mystr>), const struct mystr *p_remote_host : itype(_Ptr<const struct mystr>))
 {
-  const char* p_crypted;
-  const struct passwd* p_pwd = getpwnam(str_getbuf(p_user_str));
+  _Nt_array_ptr<const char> p_crypted = ((void *)0);
+  _Ptr<const struct passwd> p_pwd = getpwnam(str_getbuf(p_user_str));
   (void) p_remote_host;
   if (p_pwd == NULL)
   {
@@ -267,10 +266,14 @@ vsf_sysdep_check_auth(struct mystr* p_user_str,
   #ifdef VSF_SYSDEP_HAVE_USERSHELL
   if (tunable_check_shell)
   {
-    const char* p_shell;
+    _Nt_array_ptr<const char> p_shell = 0;
     while ((p_shell = getusershell()) != NULL)
     {
-      if (!vsf_sysutil_strcmp(p_shell, p_pwd->pw_shell))
+      _Nt_array_ptr<const char> pw_shell = 0;
+      _Unchecked {
+        pw_shell = _Assume_bounds_cast<_Nt_array_ptr<const char>>(p_pwd->pw_shell, byte_count(0));
+      }
+      if (!vsf_sysutil_strcmp(p_shell, pw_shell))
       {
         break;
       }
@@ -284,7 +287,7 @@ vsf_sysdep_check_auth(struct mystr* p_user_str,
   #endif
   #ifdef VSF_SYSDEP_HAVE_SHADOW
   {
-    const struct spwd* p_spwd = getspnam(str_getbuf(p_user_str));
+    _Ptr<const struct spwd> p_spwd = getspnam(str_getbuf(p_user_str));
     if (p_spwd != NULL)
     {
       long curr_time = vsf_sysutil_get_time_sec();
@@ -299,16 +302,24 @@ vsf_sysdep_check_auth(struct mystr* p_user_str,
       {
         return 0;
       }
-      p_crypted = crypt(str_getbuf(p_pass_str), p_spwd->sp_pwdp);
-      if (!vsf_sysutil_strcmp(p_crypted, p_spwd->sp_pwdp))
+      _Nt_array_ptr<const char> sp_pwdp = 0;
+      _Unchecked {
+        sp_pwdp = _Assume_bounds_cast<_Nt_array_ptr<const char>>(p_spwd->sp_pwdp, byte_count(0));
+      }
+      p_crypted = crypt(str_getbuf(p_pass_str), sp_pwdp);
+      if (!vsf_sysutil_strcmp(p_crypted, sp_pwdp))
       {
         return 1;
       }
     }
   }
   #endif /* VSF_SYSDEP_HAVE_SHADOW */
-  p_crypted = crypt(str_getbuf(p_pass_str), p_pwd->pw_passwd);
-  if (!vsf_sysutil_strcmp(p_crypted, p_pwd->pw_passwd))
+  _Nt_array_ptr<const char> pw_passwd = 0;
+  _Unchecked {
+    pw_passwd =_Assume_bounds_cast<_Nt_array_ptr<const char>>(p_pwd->pw_passwd, byte_count(0));
+  }
+  p_crypted = crypt(str_getbuf(p_pass_str), pw_passwd);
+  if (!vsf_sysutil_strcmp(p_crypted, pw_passwd))
   {
     return 1;
   }
@@ -507,7 +518,10 @@ vsf_sysdep_keep_capabilities(void)
   }
 #ifdef VSF_SYSDEP_HAVE_SETKEEPCAPS
   {
-    int retval = prctl(PR_SET_KEEPCAPS, 1);
+    int retval = 0;
+    _Unchecked {
+      prctl(PR_SET_KEEPCAPS, 1);
+    }
     if (vsf_sysutil_retval_is_error(retval))
     {
       die("prctl");
@@ -665,9 +679,7 @@ vsf_sysdep_adopt_capabilities(unsigned int caps)
 #endif /* VSF_SYSDEP_HAVE_CAPABILITIES || VSF_SYSDEP_HAVE_LIBCAP */
 
 int
-vsf_sysutil_sendfile(const int out_fd, const int in_fd,
-                     filesize_t* p_offset, filesize_t num_send,
-                     unsigned int max_chunk)
+vsf_sysutil_sendfile(const int out_fd, const int in_fd, filesize_t *p_offset : itype(_Ptr<filesize_t>), filesize_t num_send, unsigned int max_chunk)
 {
   /* Grr - why is off_t signed? */
   if (*p_offset < 0 || num_send < 0)
@@ -707,7 +719,7 @@ static int do_sendfile(const int out_fd, const int in_fd,
                        unsigned int num_send, filesize_t start_pos)
 {
   /* Probably should one day be shared with instance in ftpdataio.c */
-  static char* p_recvbuf;
+  static _Array_ptr<char> p_recvbuf : count(65537) = ((void *)0);
   unsigned int total_written = 0;
   int retval;
   enum EVSFSysUtilError error;
@@ -813,7 +825,9 @@ static int do_sendfile(const int out_fd, const int in_fd,
 #endif /* VSF_SYSDEP_HAVE_LINUX_SENDFILE || VSF_SYSDEP_HAVE_FREEBSD_SENDFILE */
   if (p_recvbuf == 0)
   {
-    vsf_secbuf_static_alloc(p_recvbuf, VSFTP_DATA_BUFSIZE);
+    _Ptr<struct secbuf> __tmp_secbuf = &(struct secbuf){0, 0, VSFTP_DATA_BUFSIZE, 0};
+    vsf_secbuf_alloc(__tmp_secbuf);
+    p_recvbuf = _Dynamic_bounds_cast<_Array_ptr<char>>(__tmp_secbuf->p_ptr, count(65537));
   }
   while (1)
   {
@@ -824,7 +838,8 @@ static int do_sendfile(const int out_fd, const int in_fd,
     {
       num_read_this_time = num_send;
     }
-    retval = vsf_sysutil_read(in_fd, p_recvbuf, num_read_this_time);
+    _Array_ptr<char> p_recvbuf_num_read_this_time : count(num_read_this_time) = _Dynamic_bounds_cast<_Array_ptr<char>>(p_recvbuf, count(num_read_this_time));
+    retval = vsf_sysutil_read<char>(in_fd, p_recvbuf_num_read_this_time, num_read_this_time);
     if (retval < 0)
     {
       return retval;
@@ -834,7 +849,8 @@ static int do_sendfile(const int out_fd, const int in_fd,
       return -1;
     }
     num_read = (unsigned int) retval;
-    retval = vsf_sysutil_write_loop(out_fd, p_recvbuf, num_read);
+    _Array_ptr<char> p_recvbuf_num_read : count(num_read) = _Dynamic_bounds_cast<_Array_ptr<char>>(p_recvbuf, count(num_read));
+    retval = vsf_sysutil_write_loop<char>(out_fd, p_recvbuf_num_read, num_read);
     if (retval < 0)
     {
       return retval;
@@ -859,20 +875,20 @@ static int do_sendfile(const int out_fd, const int in_fd,
 }
 
 void
-vsf_sysutil_set_proctitle_prefix(const struct mystr* p_str)
+vsf_sysutil_set_proctitle_prefix(const struct mystr *p_str : itype(_Ptr<const struct mystr>))
 {
   str_copy(&s_proctitle_prefix_str, p_str);
 }
 
 /* This delegation is common to all setproctitle() implementations */
 void
-vsf_sysutil_setproctitle_str(const struct mystr* p_str)
+vsf_sysutil_setproctitle_str(const struct mystr *p_str : itype(_Ptr<const struct mystr>))
 {
   vsf_sysutil_setproctitle(str_getbuf(p_str));
 }
 
 void
-vsf_sysutil_setproctitle(const char* p_text)
+vsf_sysutil_setproctitle(const char *p_text : itype(_Nt_array_ptr<const char>))
 {
   struct mystr proctitle_str = INIT_MYSTR;
   str_copy(&proctitle_str, &s_proctitle_prefix_str);
@@ -919,10 +935,11 @@ vsf_sysutil_setproctitle_internal(const char* p_buf)
 }
 #elif defined(VSF_SYSDEP_TRY_LINUX_SETPROCTITLE_HACK)
 void
-vsf_sysutil_setproctitle_init(int argc, const char** argv)
+vsf_sysutil_setproctitle_init(int argc, const char **argv : itype(_Array_ptr<_Nt_array_ptr<const char>>) count(argc))
 {
   int i;
-  char** p_env = environ;
+  _Nt_array_ptr<_Nt_array_ptr<char>> p_env = environ;
+
   if (s_proctitle_inited)
   {
     bug("vsf_sysutil_setproctitle_init called twice");
@@ -947,12 +964,17 @@ vsf_sysutil_setproctitle_init(int argc, const char** argv)
   }
   /* Oops :-) */
   environ = 0;
-  s_p_proctitle = (char*) argv[0];
-  vsf_sysutil_memclr(s_p_proctitle, s_proctitle_space);
+  _Unchecked {
+    // It looks like this assumes that command line arguments and environment
+    // variables are stored in a continuous block of memory. I think that's a
+    // valid assumption, but I don't know how I can inform Checked C about it.
+    s_p_proctitle = _Assume_bounds_cast<_Array_ptr<char>>(argv[0], count(s_proctitle_space));
+  }
+  vsf_sysutil_memclr<char>(s_p_proctitle, s_proctitle_space);
 }
 
 void
-vsf_sysutil_setproctitle_internal(const char* p_buf)
+vsf_sysutil_setproctitle_internal(_Nt_array_ptr<const char> p_buf)
 {
   struct mystr proctitle_str = INIT_MYSTR;
   unsigned int to_copy;
@@ -960,7 +982,7 @@ vsf_sysutil_setproctitle_internal(const char* p_buf)
   {
     bug("vsf_sysutil_setproctitle: not initialized");
   }
-  vsf_sysutil_memclr(s_p_proctitle, s_proctitle_space);
+  vsf_sysutil_memclr<char>(s_p_proctitle, s_proctitle_space);
   if (s_proctitle_space < 32)
   {
     return;
@@ -972,7 +994,14 @@ vsf_sysutil_setproctitle_internal(const char* p_buf)
   {
     to_copy = s_proctitle_space - 1;
   }
-  vsf_sysutil_memcpy(s_p_proctitle, str_getbuf(&proctitle_str), to_copy);
+
+  _Array_ptr<char> dst : count(to_copy) = _Dynamic_bounds_cast<_Array_ptr<char>>(s_p_proctitle, count(to_copy));
+  _Nt_array_ptr<char> src = (_Nt_array_ptr<char>) str_getbuf(&proctitle_str);
+  _Array_ptr<char> src_len : count(to_copy) = 0;
+  _Unchecked {
+    src_len = _Assume_bounds_cast<_Array_ptr<char>>(src, count(to_copy));
+  }
+  vsf_sysutil_memcpy<char>(dst, src_len, to_copy);
   str_free(&proctitle_str);
   s_p_proctitle[to_copy] = '\0';
 }
@@ -997,12 +1026,16 @@ vsf_sysutil_map_anon_pages_init(void)
 {
 }
 
-void*
-vsf_sysutil_map_anon_pages(unsigned int length)
+_Itype_for_any(T) void*
+vsf_sysutil_map_anon_pages(unsigned int length) : itype(_Array_ptr<T>) byte_count(length)
 {
-  char* retval = mmap(0, length, PROT_READ | PROT_WRITE,
-                      MAP_PRIVATE | MAP_ANON, -1, 0);
-  if (retval == MAP_FAILED)
+  unsigned long long_len = (unsigned long) length;
+  _Array_ptr<T> retval : byte_count(long_len) = mmap<T>(0, long_len, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANON, -1, 0);
+  int error;
+  _Unchecked {
+    error = ((void*) retval) == (void*) -1;
+  }
+  if (error)
   {
     die("mmap");
   }
@@ -1016,19 +1049,21 @@ vsf_sysutil_map_anon_pages_init(void)
   {
     bug("vsf_sysutil_map_anon_pages_init called twice");
   }
-  s_zero_fd = open("/dev/zero", O_RDWR);
+  _Unchecked {
+    s_zero_fd = open("/dev/zero", O_RDWR);
+  }
   if (s_zero_fd < 0)
   {
     die("could not open /dev/zero");
   }
 }
 
-void*
-vsf_sysutil_map_anon_pages(unsigned int length)
+_Itype_for_any(T) void*
+vsf_sysutil_map_anon_pages(unsigned int length) : itype(_Array_ptr<T>) byte_count(length)
+
 {
-  char* retval = mmap(0, length, PROT_READ | PROT_WRITE,
-                      MAP_PRIVATE, s_zero_fd, 0);
-  if (retval == MAP_FAILED)
+  _Array_ptr<T> retval : byte_count(length) = mmap(0, length, PROT_READ | PROT_WRITE, MAP_PRIVATE, s_zero_fd, 0);
+  if (retval == -1)
   {
     die("mmap");
   }
@@ -1043,29 +1078,41 @@ vsf_sysutil_send_fd(int sock_fd, int send_fd)
 {
   int retval;
   struct msghdr msg;
-  struct cmsghdr* p_cmsg;
+  _Ptr<struct cmsghdr> p_cmsg = 0;
   struct iovec vec;
-  char cmsgbuf[CMSG_SPACE(sizeof(send_fd))];
-  int* p_fds;
+  char cmsgbuf _Checked[CMSG_SPACE(sizeof(send_fd))];
+  _Ptr<int> p_fds = 0;
   char sendchar = 0;
-  msg.msg_control = cmsgbuf;
+  _Unchecked {
+    msg.msg_control = (void*) cmsgbuf;
+  }
   msg.msg_controllen = sizeof(cmsgbuf);
-  p_cmsg = CMSG_FIRSTHDR(&msg);
+  _Unchecked {
+    p_cmsg = _Assume_bounds_cast<_Ptr<struct cmsghdr>>(CMSG_FIRSTHDR(&msg));
+  }
   p_cmsg->cmsg_level = SOL_SOCKET;
   p_cmsg->cmsg_type = SCM_RIGHTS;
   p_cmsg->cmsg_len = CMSG_LEN(sizeof(send_fd));
-  p_fds = (int*)CMSG_DATA(p_cmsg);
+  _Unchecked {
+    p_fds = _Assume_bounds_cast<_Ptr<int>>(CMSG_DATA(p_cmsg));
+  }
   *p_fds = send_fd;
   msg.msg_controllen = p_cmsg->cmsg_len;
-  msg.msg_name = NULL;
+  _Unchecked {
+    msg.msg_name = NULL;
+  }
   msg.msg_namelen = 0;
-  msg.msg_iov = &vec;
+  _Unchecked {
+    msg.msg_iov = &vec;
+  }
   msg.msg_iovlen = 1;
   msg.msg_flags = 0;
   /* "To pass file descriptors or credentials you need to send/read at
    * least on byte" (man 7 unix)
    */
-  vec.iov_base = &sendchar;
+  _Unchecked {
+    vec.iov_base = &sendchar;
+  }
   vec.iov_len = sizeof(sendchar);
   retval = sendmsg(sock_fd, &msg, 0);
   if (retval != 1)
@@ -1082,27 +1129,39 @@ vsf_sysutil_recv_fd(const int sock_fd)
   char recvchar;
   struct iovec vec;
   int recv_fd;
-  char cmsgbuf[CMSG_SPACE(sizeof(recv_fd))];
-  struct cmsghdr* p_cmsg;
-  int* p_fd;
-  vec.iov_base = &recvchar;
+  char cmsgbuf _Checked[CMSG_SPACE(sizeof(recv_fd))];
+  _Ptr<struct cmsghdr> p_cmsg = 0;
+  _Ptr<int> p_fd = 0;
+  _Unchecked {
+    vec.iov_base = &recvchar;
+  }
   vec.iov_len = sizeof(recvchar);
-  msg.msg_name = NULL;
+  _Unchecked {
+    msg.msg_name = NULL;
+  }
   msg.msg_namelen = 0;
-  msg.msg_iov = &vec;
+  _Unchecked {
+    msg.msg_iov = &vec;
+  }
   msg.msg_iovlen = 1;
-  msg.msg_control = cmsgbuf;
+  _Unchecked {
+    msg.msg_control = (void*) cmsgbuf;
+  }
   msg.msg_controllen = sizeof(cmsgbuf);
   msg.msg_flags = 0;
   /* In case something goes wrong, set the fd to -1 before the syscall */
-  p_fd = (int*)CMSG_DATA(CMSG_FIRSTHDR(&msg));
+  _Unchecked {
+    p_fd = _Assume_bounds_cast<_Ptr<int>>(CMSG_DATA(CMSG_FIRSTHDR(&msg)));
+  }
   *p_fd = -1;  
   retval = recvmsg(sock_fd, &msg, 0);
   if (retval != 1)
   {
     die("recvmsg");
   }
-  p_cmsg = CMSG_FIRSTHDR(&msg);
+  _Unchecked {
+    p_cmsg = _Assume_bounds_cast<_Ptr<struct cmsghdr>>(CMSG_FIRSTHDR(&msg));
+  }
   if (p_cmsg == NULL)
   {
     die("no passed fd");
@@ -1110,7 +1169,9 @@ vsf_sysutil_recv_fd(const int sock_fd)
   /* We used to verify the returned cmsg_level, cmsg_type and cmsg_len here,
    * but Linux 2.0 totally uselessly fails to fill these in.
    */
-  p_fd = (int*)CMSG_DATA(p_cmsg);
+  _Unchecked {
+    p_fd = _Assume_bounds_cast<_Ptr<int>>(CMSG_DATA(p_cmsg));
+  }
   recv_fd = *p_fd;
   if (recv_fd == -1)
   {
@@ -1196,10 +1257,15 @@ static int s_uwtmp_inserted;
 static struct utmpx s_utent;
 
 void
-vsf_insert_uwtmp(const struct mystr* p_user_str,
-                 const struct mystr* p_host_str)
+vsf_insert_uwtmp(const struct mystr *p_user_str : itype(_Ptr<const struct mystr>), const struct mystr *p_host_str : itype(_Ptr<const struct mystr>))
 {
-  if (sizeof(s_utent.ut_line) < 16)
+  size_t ut_line_size, ut_user_size, ut_host_size;
+  _Unchecked {
+    ut_line_size = sizeof(s_utent.ut_line);
+    ut_user_size = sizeof(s_utent.ut_user);
+    ut_host_size = sizeof(s_utent.ut_host);
+  }
+  if (ut_line_size < 16)
   {
     return;
   }
@@ -1211,27 +1277,33 @@ vsf_insert_uwtmp(const struct mystr* p_user_str,
     struct mystr line_str = INIT_MYSTR;
     str_alloc_text(&line_str, "vsftpd:");
     str_append_ulong(&line_str, vsf_sysutil_getpid());
-    if (str_getlen(&line_str) >= sizeof(s_utent.ut_line))
+    if (str_getlen(&line_str) >= ut_line_size)
     {
       str_free(&line_str);
       return;
     }
-    vsf_sysutil_strcpy(s_utent.ut_line, str_getbuf(&line_str),
-                       sizeof(s_utent.ut_line));
+    _Unchecked {
+      vsf_sysutil_strcpy(s_utent.ut_line, str_getbuf(&line_str),
+                         ut_line_size);
+    }
     str_free(&line_str);
   }
   s_uwtmp_inserted = 1;
   s_utent.ut_type = USER_PROCESS;
   s_utent.ut_pid = vsf_sysutil_getpid();
-  vsf_sysutil_strcpy(s_utent.ut_user, str_getbuf(p_user_str),
-                     sizeof(s_utent.ut_user));
-  vsf_sysutil_strcpy(s_utent.ut_host, str_getbuf(p_host_str),
-                     sizeof(s_utent.ut_host));
+  _Unchecked {
+    vsf_sysutil_strcpy(s_utent.ut_user, str_getbuf(p_user_str),
+                       ut_user_size);
+    vsf_sysutil_strcpy(s_utent.ut_host, str_getbuf(p_host_str),
+                       ut_host_size);
+  }
   s_utent.ut_tv.tv_sec = vsf_sysutil_get_time_sec();
   setutxent();
-  (void) pututxline(&s_utent);
-  endutxent();
-  updwtmpx(WTMPX_FILE, &s_utent);
+  _Unchecked {
+    (void) pututxline(&s_utent);
+    endutxent();
+    updwtmpx(WTMPX_FILE, &s_utent);
+  }
 }
 
 void
@@ -1243,14 +1315,20 @@ vsf_remove_uwtmp(void)
   }
   s_uwtmp_inserted = 0;
   s_utent.ut_type = DEAD_PROCESS;
-  vsf_sysutil_memclr(s_utent.ut_user, sizeof(s_utent.ut_user));
-  vsf_sysutil_memclr(s_utent.ut_host, sizeof(s_utent.ut_host));
+
+  _Unchecked {
+    vsf_sysutil_memclr<char>(s_utent.ut_user, sizeof(s_utent.ut_user));
+    vsf_sysutil_memclr<char>(s_utent.ut_host, sizeof(s_utent.ut_host));
+  }
+
   s_utent.ut_tv.tv_sec = 0;
   setutxent();
-  (void) pututxline(&s_utent);
-  endutxent();
-  s_utent.ut_tv.tv_sec = vsf_sysutil_get_time_sec();
-  updwtmpx(WTMPX_FILE, &s_utent);
+  _Unchecked {
+    (void) pututxline(&s_utent);
+    endutxent();
+    s_utent.ut_tv.tv_sec = vsf_sysutil_get_time_sec();
+    updwtmpx(WTMPX_FILE, &s_utent);
+  }
 }
 
 #endif /* !VSF_SYSDEP_HAVE_UTMPX */
@@ -1259,7 +1337,11 @@ void
 vsf_set_die_if_parent_dies()
 {
 #ifdef VSF_SYSDEP_HAVE_SETPDEATHSIG
-  if (prctl(PR_SET_PDEATHSIG, SIGKILL, 0, 0, 0) != 0)
+  int res;
+  _Unchecked {
+    res = prctl(PR_SET_PDEATHSIG, SIGKILL, 0, 0, 0);
+  }
+  if (res != 0)
   {
     die("prctl");
   }
@@ -1270,7 +1352,11 @@ void
 vsf_set_term_if_parent_dies()
 {
 #ifdef VSF_SYSDEP_HAVE_SETPDEATHSIG
-  if (prctl(PR_SET_PDEATHSIG, SIGTERM, 0, 0, 0) != 0)
+  int res;
+  _Unchecked {
+    res = prctl(PR_SET_PDEATHSIG, SIGTERM, 0, 0, 0);
+  }
+  if (res != 0)
   {
     die("prctl");
   }
@@ -1284,7 +1370,7 @@ vsf_set_term_if_parent_dies()
  */
 static int
 vsf_sysutil_netns_cleanup_is_fast(void)
-{
+_Unchecked {
 #ifdef __linux__
   struct utsname utsname;
   int r1, r2, r3 = 0;
@@ -1309,9 +1395,12 @@ vsf_sysutil_fork_isolate_all_failok()
   }
   if (cloneflags_work)
   {
-    int ret = syscall(__NR_clone,
+    int ret;
+    _Unchecked {
+     ret  = syscall(__NR_clone,
                       CLONE_NEWIPC | CLONE_NEWNET | SIGCHLD,
                       NULL);
+    }
     if (ret != -1 || (errno != EINVAL && errno != EPERM))
     {
       if (ret == 0)
@@ -1333,7 +1422,10 @@ vsf_sysutil_fork_isolate_failok()
   static int cloneflags_work = 1;
   if (cloneflags_work)
   {
-    int ret = syscall(__NR_clone, CLONE_NEWIPC | SIGCHLD, NULL);
+    int ret;
+    _Unchecked {
+      ret = syscall(__NR_clone, CLONE_NEWIPC | SIGCHLD, NULL);
+    }
     if (ret != -1 || (errno != EINVAL && errno != EPERM))
     {
       if (ret == 0)
@@ -1359,7 +1451,10 @@ vsf_sysutil_fork_newnet()
   }
   if (cloneflags_work)
   {
-    int ret = syscall(__NR_clone, CLONE_NEWNET | SIGCHLD, NULL);
+    int ret;
+    _Unchecked {
+       ret = syscall(__NR_clone, CLONE_NEWNET | SIGCHLD, NULL);
+    }
     if (ret != -1 || (errno != EINVAL && errno != EPERM))
     {
       if (ret == 0)
@@ -1381,7 +1476,11 @@ vsf_sysutil_getpid_nocache(void)
   /* Need to defeat the glibc pid caching because we need to hit a raw
    * sys_clone() above.
    */
-  return syscall(__NR_getpid);
+  int ret;
+  _Unchecked {
+    ret = syscall(__NR_getpid);
+  }
+  return ret;
 #else
   return getpid();
 #endif
