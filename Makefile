@@ -3,7 +3,7 @@ CC 	=	clang
 INSTALL	=	install
 IFLAGS  = -idirafter dummyinc
 CFLAGS	=	-O2 -fPIE -fstack-protector --param=ssp-buffer-size=4 \
-	-Wall -W -Wshadow -Werror -Wformat-security \
+	-Wall -W -Wshadow -Wformat-security \
 	-D_FORTIFY_SOURCE=2 \
 	-Wno-incompatible-pointer-types-discards-qualifiers \
 	-Wno-enum-conversion \
