@@ -82,15 +82,6 @@ static vsf_context_io_t s_io_handler;
 static void* s_p_io_handler_private;
 static int s_io_handler_running;
 
-struct vsf_sysutil_sockaddr
-{
-  union
-  {
-    struct sockaddr u_sockaddr;
-    struct sockaddr_in u_sockaddr_in;
-    struct sockaddr_in6 u_sockaddr_in6;
-  } u;
-};
 
 /* File locals */
 static void vsf_sysutil_common_sighandler(int signum);

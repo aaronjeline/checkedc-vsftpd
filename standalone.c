@@ -31,11 +31,11 @@ static unsigned int s_ipaddr_size;
 static void handle_sigchld(_Ptr<void>  duff);
 static void handle_sighup(_Ptr<void>  duff);
 static void prepare_child(int sockfd);
-static unsigned int handle_ip_count(_Ptr<void> p_raw_addr);
-static void drop_ip_count(_Ptr<void> p_raw_addr);
+static unsigned int handle_ip_count(_Array_ptr<void> p_raw_addr : byte_count(s_p_ip_count_hash->key_size));
+static void drop_ip_count(_Array_ptr<void> p_raw_addr : byte_count(s_p_ip_count_hash->key_size));
 
-static unsigned int hash_ip(unsigned int buckets, _Ptr<void> p_key);
-static unsigned int hash_pid(unsigned int buckets, _Ptr<void> p_key);
+static unsigned int hash_ip(unsigned int buckets, _Array_ptr<void> p_key : byte_count(0));
+static unsigned int hash_pid(unsigned int buckets, _Array_ptr<void> p_key : byte_count(0));
 
 struct vsf_client_launch
 vsf_standalone_main(void)
@@ -155,7 +155,7 @@ vsf_standalone_main(void)
   while (1)
   {
     struct vsf_client_launch child_info;
-    _Ptr<void> p_raw_addr = 0;
+    _Array_ptr<void> p_raw_addr : byte_count(s_p_pid_ip_hash->value_size) = 0;
     int new_child;
     int new_client_sock;
     new_client_sock = vsf_sysutil_accept_timeout(
@@ -167,8 +167,9 @@ vsf_standalone_main(void)
     ++s_children;
     child_info.num_children = s_children;
     child_info.num_this_ip = 0;
-    p_raw_addr = vsf_sysutil_sockaddr_get_raw_addr(p_accept_addr);
-    child_info.num_this_ip = handle_ip_count(p_raw_addr);
+    p_raw_addr = _Dynamic_bounds_cast<_Array_ptr<void>>(vsf_sysutil_sockaddr_get_raw_addr(p_accept_addr), byte_count(s_p_pid_ip_hash->value_size));
+    _Array_ptr<void> p_raw_addr_key  : byte_count(s_p_ip_count_hash->key_size) = _Dynamic_bounds_cast<_Array_ptr<void>>(p_raw_addr, byte_count(s_p_ip_count_hash->key_size));
+    child_info.num_this_ip = handle_ip_count(p_raw_addr_key);
     if (tunable_isolate)
     {
       if (tunable_http_enable && tunable_isolate_network)
@@ -190,13 +191,14 @@ vsf_standalone_main(void)
       vsf_sysutil_close(new_client_sock);
       if (new_child > 0)
       {
-        hash_add_entry(s_p_pid_ip_hash, (_Ptr<void>) &new_child, p_raw_addr);
+        _Array_ptr<void> key : byte_count(s_p_pid_ip_hash->key_size) = _Dynamic_bounds_cast<_Array_ptr<void>>(&new_child, byte_count(s_p_pid_ip_hash->key_size));
+        hash_add_entry(s_p_pid_ip_hash, key, p_raw_addr);
       }
       else
       {
         /* fork() failed, clear up! */
         --s_children;
-        drop_ip_count(p_raw_addr);
+        drop_ip_count(p_raw_addr_key);
       }
       /* Fall through to while() loop and accept() again */
     }
@@ -228,15 +230,13 @@ prepare_child(int new_client_sock)
 }
 
 static void
-drop_ip_count(_Ptr<void> p_raw_addr)
+drop_ip_count(_Array_ptr<void> p_raw_addr : byte_count(s_p_ip_count_hash->key_size))
 {
   unsigned int count;
   _Ptr<unsigned int> p_count = 0;
-  _Ptr<void> result =
+  _Array_ptr<void> result : byte_count(s_p_ip_count_hash->value_size) =
     hash_lookup_entry(s_p_ip_count_hash, p_raw_addr);
-  _Unchecked {
-    p_count = _Assume_bounds_cast<_Ptr<unsigned int>>(result);
-  }
+  p_count = _Dynamic_bounds_cast<_Ptr<unsigned int>>(result);
   if (!p_count)
   {
     bug("IP address missing from hash");
@@ -267,9 +267,11 @@ handle_sigchld(_Ptr<void> duff)
       /* Account total number of instances */
       --s_children;
       /* Account per-IP limit */
-      _Ptr<void> result = hash_lookup_entry(s_p_pid_ip_hash, (_Ptr<void>) &reap_one);
-      drop_ip_count(result);      
-      hash_free_entry(s_p_pid_ip_hash, (_Ptr<void>) &reap_one);
+      _Array_ptr<void> key : byte_count(s_p_pid_ip_hash->key_size) = _Dynamic_bounds_cast<_Array_ptr<void>>(&reap_one, byte_count(s_p_pid_ip_hash->key_size));
+      _Array_ptr<void> result : byte_count(s_p_pid_ip_hash->value_size) = hash_lookup_entry(s_p_pid_ip_hash, key);
+      _Array_ptr<void> result_tmp : byte_count(s_p_ip_count_hash->key_size) = _Dynamic_bounds_cast<_Array_ptr<void>>(result, byte_count(s_p_ip_count_hash->key_size));
+      drop_ip_count(result_tmp);
+      hash_free_entry(s_p_pid_ip_hash, key);
     }
   }
 }
@@ -284,11 +286,11 @@ handle_sighup(_Ptr<void> duff)
 }
 
 static unsigned int
-hash_ip(unsigned int buckets, _Ptr<void> p_key)
+hash_ip(unsigned int buckets, _Array_ptr<void> p_key : byte_count(0))
 {
-  _Array_ptr<const unsigned char> p_raw_ip : count(s_ipaddr_size) = 0;
+  _Array_ptr<const unsigned char> p_raw_ip : byte_count(s_ipaddr_size) = 0;
   _Unchecked {
-    p_raw_ip = _Assume_bounds_cast<_Array_ptr<const unsigned char>>(p_key, count(s_ipaddr_size));
+    p_raw_ip = _Assume_bounds_cast<_Array_ptr<const unsigned char>>(p_key, byte_count(s_ipaddr_size));
   }
   unsigned int val = 0;
   int shift = 24;
@@ -306,7 +308,7 @@ hash_ip(unsigned int buckets, _Ptr<void> p_key)
 }
 
 static unsigned int
-hash_pid(unsigned int buckets, _Ptr<void> p_key)
+hash_pid(unsigned int buckets, _Array_ptr<void> p_key : byte_count(0))
 {
   _Ptr<unsigned int> p_pid = 0;
   _Unchecked {
@@ -316,18 +318,16 @@ hash_pid(unsigned int buckets, _Ptr<void> p_key)
 }
 
 static unsigned int
-handle_ip_count(_Ptr<void> p_ipaddr)
+handle_ip_count(_Array_ptr<void> p_ipaddr : byte_count(s_p_ip_count_hash->key_size))
 {
-  _Ptr<void> result = hash_lookup_entry(s_p_ip_count_hash, p_ipaddr);
-  _Ptr<unsigned int> p_count = 0;
-  _Unchecked {
-    p_count = _Assume_bounds_cast<_Ptr<unsigned int>>(result);
-  }
+  _Array_ptr<void> result : byte_count(s_p_ip_count_hash->value_size) = hash_lookup_entry(s_p_ip_count_hash, p_ipaddr);
+  _Ptr<unsigned int> p_count = _Dynamic_bounds_cast<_Ptr<unsigned int>>(result);
   unsigned int count;
   if (!p_count)
   {
     count = 1;
-    hash_add_entry(s_p_ip_count_hash, p_ipaddr, (_Ptr<void>) &count);
+    _Array_ptr<void> value : byte_count(s_p_ip_count_hash->value_size) = _Dynamic_bounds_cast<_Array_ptr<void>>(&count, byte_count(s_p_ip_count_hash->value_size));
+    hash_add_entry(s_p_ip_count_hash, p_ipaddr, value);
   }
   else
   {

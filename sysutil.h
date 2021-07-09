@@ -198,7 +198,16 @@ int vsf_sysutil_isalnum(int the_char);
 int vsf_sysutil_isdigit(int the_char);
 
 /* Socket handling */
-struct vsf_sysutil_sockaddr;
+struct vsf_sysutil_sockaddr
+{
+  union
+  {
+    struct sockaddr u_sockaddr;
+    struct sockaddr_in u_sockaddr_in;
+    struct sockaddr_in6 u_sockaddr_in6;
+  } u;
+};
+
 struct vsf_sysutil_socketpair_retval
 {
   int socket_one;
@@ -221,7 +230,7 @@ void vsf_sysutil_sockaddr_set_port(struct vsf_sysutil_sockaddr *p_sockptr : ityp
 int vsf_sysutil_is_port_reserved(unsigned short port);
 int vsf_sysutil_get_ipsock(const struct vsf_sysutil_sockaddr *p_sockaddr : itype(_Ptr<const struct vsf_sysutil_sockaddr>));
 unsigned int vsf_sysutil_get_ipaddr_size(void);
-void* vsf_sysutil_sockaddr_get_raw_addr(struct vsf_sysutil_sockaddr *p_sockaddr : itype(_Ptr<struct vsf_sysutil_sockaddr>)) : itype(_Ptr<void>);
+void* vsf_sysutil_sockaddr_get_raw_addr(struct vsf_sysutil_sockaddr *p_sockptr : itype(_Ptr<struct vsf_sysutil_sockaddr>)) : itype(_Array_ptr<void>) byte_count(sizeof(p_sockptr->u.u_sockaddr_in6.sin6_addr));
 const void* vsf_sysutil_sockaddr_ipv6_v4(const struct vsf_sysutil_sockaddr *p_sockaddr : itype(_Ptr<const struct vsf_sysutil_sockaddr>)) : itype(_Ptr<const void>);
 const void* vsf_sysutil_sockaddr_ipv4_v6(const struct vsf_sysutil_sockaddr *p_sockaddr : itype(_Ptr<const struct vsf_sysutil_sockaddr>)) : itype(_Ptr<const void>);
 int vsf_sysutil_get_ipv4_sock(void);
