@@ -130,7 +130,7 @@ const char *vsf_sysutil_statbuf_get_sortkey_mtime(const struct vsf_sysutil_statb
 int vsf_sysutil_chmod(const char *p_filename : itype(_Nt_array_ptr<const char>), unsigned int mode);
 void vsf_sysutil_fchown(const int fd, const int uid, const int gid);
 void vsf_sysutil_fchmod(const int fd, unsigned int mode);
-int vsf_sysutil_readlink(const char *p_filename : itype(_Nt_array_ptr<const char>), char *p_dest : itype(_Nt_array_ptr<char>) count(0), unsigned int bufsiz);
+int vsf_sysutil_readlink(const char *p_filename : itype(_Nt_array_ptr<const char>), char *p_dest : itype(_Nt_array_ptr<char>) count(bufsiz), unsigned int bufsiz);
 
 /* Get / unget various locks. Lock gets are blocking. Write locks are
  * exclusive; read locks are shared.
@@ -176,11 +176,11 @@ int vsf_sysutil_wait_get_exitcode(const struct vsf_sysutil_wait_retval *p_waitre
 /* Various string functions */
 unsigned int vsf_sysutil_strlen(const char *p_text : itype(_Nt_array_ptr<const char>));
 char *vsf_sysutil_strdup(const char *p_str : itype(_Nt_array_ptr<const char>)) : itype(_Nt_array_ptr<char>);
-char *vsf_sysutil_strndup(const char *p_str : itype(_Array_ptr<const char>), unsigned int p_len) : itype(_Nt_array_ptr<char>);
+char *vsf_sysutil_strndup(const char *p_str : itype(_Array_ptr<const char>) count(p_len), unsigned int p_len) : itype(_Nt_array_ptr<char>) count(p_len);
 _Itype_for_any(T) void vsf_sysutil_memclr(void* p_dest : itype(_Array_ptr<T>) byte_count(size), unsigned int size);
 _Itype_for_any(T) void vsf_sysutil_memcpy(void* p_dest : itype(_Array_ptr<T>) byte_count(size), const void* p_src : itype(_Array_ptr<T>) byte_count(size),
                                           const unsigned int size);
-void vsf_sysutil_strcpy(char *p_dest : itype(_Array_ptr<char>) count(maxsize), const char *p_src : itype(_Array_ptr<const char>), unsigned int maxsize);
+void vsf_sysutil_strcpy(char *p_dest : itype(_Array_ptr<char>) count(maxsize), const char *p_src : itype(_Array_ptr<const char>) count(maxsize), unsigned int maxsize);
 _Itype_for_any(T) int vsf_sysutil_memcmp(const void* p_src1 : itype(_Array_ptr<const T>) byte_count(size) , const void* p_src2 : itype(_Array_ptr<const T>) byte_count(size),
                        unsigned int size);
 int vsf_sysutil_strcmp(const char *p_src1 : itype(_Nt_array_ptr<const char>), const char *p_src2 : itype(_Nt_array_ptr<const char>));
@@ -190,7 +190,7 @@ const char *vsf_sysutil_ulong_to_str(unsigned long the_ulong) : itype(_Nt_array_
 const char *vsf_sysutil_filesize_t_to_str(filesize_t the_filesize) : itype(_Nt_array_ptr<const char>);
 const char *vsf_sysutil_double_to_str(double the_double) : itype(_Nt_array_ptr<const char>);
 const char *vsf_sysutil_uint_to_octal(unsigned int the_uint) : itype(_Nt_array_ptr<const char>);
-unsigned int vsf_sysutil_octal_to_uint(const char *p_str : itype(_Array_ptr<const char>));
+unsigned int vsf_sysutil_octal_to_uint(const char *p_str : itype(_Nt_array_ptr<const char>));
 int vsf_sysutil_toupper(int the_char);
 int vsf_sysutil_isspace(int the_char);
 int vsf_sysutil_isprint(int the_char);
@@ -231,8 +231,8 @@ int vsf_sysutil_is_port_reserved(unsigned short port);
 int vsf_sysutil_get_ipsock(const struct vsf_sysutil_sockaddr *p_sockaddr : itype(_Ptr<const struct vsf_sysutil_sockaddr>));
 unsigned int vsf_sysutil_get_ipaddr_size(void);
 void* vsf_sysutil_sockaddr_get_raw_addr(struct vsf_sysutil_sockaddr *p_sockptr : itype(_Ptr<struct vsf_sysutil_sockaddr>)) : itype(_Array_ptr<void>) byte_count(sizeof(p_sockptr->u.u_sockaddr_in6.sin6_addr));
-const void* vsf_sysutil_sockaddr_ipv6_v4(const struct vsf_sysutil_sockaddr *p_sockaddr : itype(_Ptr<const struct vsf_sysutil_sockaddr>)) : itype(_Ptr<const void>);
-const void* vsf_sysutil_sockaddr_ipv4_v6(const struct vsf_sysutil_sockaddr *p_sockaddr : itype(_Ptr<const struct vsf_sysutil_sockaddr>)) : itype(_Ptr<const void>);
+const void* vsf_sysutil_sockaddr_ipv6_v4(const struct vsf_sysutil_sockaddr *p_addr : itype(_Ptr<const struct vsf_sysutil_sockaddr>)) : itype(_Array_ptr<const void>) byte_count(4);
+const void* vsf_sysutil_sockaddr_ipv4_v6(const struct vsf_sysutil_sockaddr *p_sockaddr : itype(_Ptr<const struct vsf_sysutil_sockaddr>)) : itype(_Array_ptr<const void>) byte_count(16);
 int vsf_sysutil_get_ipv4_sock(void);
 int vsf_sysutil_get_ipv6_sock(void);
 struct vsf_sysutil_socketpair_retval
@@ -262,7 +262,7 @@ void vsf_sysutil_shutdown_read_failok(int fd);
 _Itype_for_any(T) int vsf_sysutil_recv_peek(const int fd, void* p_buf : itype(_Array_ptr<T>) byte_count(len), unsigned int len);
 
 const char *vsf_sysutil_inet_ntop(const struct vsf_sysutil_sockaddr *p_sockptr : itype(_Ptr<const struct vsf_sysutil_sockaddr>)) : itype(_Nt_array_ptr<const char>);
-const char *vsf_sysutil_inet_ntoa(const void* p_raw_addr : itype(_Ptr<const void>)) : itype(_Nt_array_ptr<const char>);
+const char *vsf_sysutil_inet_ntoa(const void* p_raw_addr : itype(_Array_ptr<const void>) byte_count(sizeof(struct in_addr))) : itype(_Nt_array_ptr<const char>);
 int vsf_sysutil_inet_aton(const char *p_text : itype(_Nt_array_ptr<const char>), struct vsf_sysutil_sockaddr *p_addr : itype(_Ptr<struct vsf_sysutil_sockaddr>));
 
 /* User database queries etc. */
@@ -321,7 +321,7 @@ void vsf_sysutil_chroot(const char *p_root_path : itype(_Nt_array_ptr<const char
  */
 long vsf_sysutil_get_time_sec(void);
 long vsf_sysutil_get_time_usec(void);
-long vsf_sysutil_parse_time(const char *p_text : itype(_Nt_array_ptr<const char>));
+long vsf_sysutil_parse_time(const char *p_text : itype(_Nt_array_ptr<const char>) count(14));
 void vsf_sysutil_sleep(double seconds);
 int vsf_sysutil_setmodtime(const char *p_file : itype(_Nt_array_ptr<const char>), long the_time, int is_localtime);
 

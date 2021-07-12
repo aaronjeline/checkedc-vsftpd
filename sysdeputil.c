@@ -193,7 +193,7 @@
 #undef VSF_SYSDEP_HAVE_CAPABILITIES
 
 /* Prefer libcap based capabilities over raw syscall capabilities */
-#include <sys/capability.h>
+//#include <sys/capability.h>
 
 #if defined(VSF_SYSDEP_HAVE_CAPABILITIES) && !defined(VSF_SYSDEP_HAVE_LIBCAP)
 #include <linux/unistd.h>

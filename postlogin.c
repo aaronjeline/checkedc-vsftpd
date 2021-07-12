@@ -623,7 +623,7 @@ handle_pasv(struct vsf_session *p_sess : itype(_Ptr<struct vsf_session>), int is
   }
   else
   {
-    _Ptr<const void> p_v4addr = vsf_sysutil_sockaddr_ipv6_v4(s_p_sockaddr);
+    _Array_ptr<const void> p_v4addr : byte_count(4) = vsf_sysutil_sockaddr_ipv6_v4(s_p_sockaddr);
     if (p_v4addr)
     {
       str_append_text(&s_pasv_res_str, vsf_sysutil_inet_ntoa(p_v4addr));
@@ -1623,7 +1623,14 @@ handle_mdtm(struct vsf_session *p_sess : itype(_Ptr<struct vsf_session>))
   if (do_write != 0)
   {
     str_split_char(&p_sess->ftp_arg_str, &s_filename_str, ' ');
-    modtime = vsf_sysutil_parse_time(str_getbuf(&p_sess->ftp_arg_str));
+    _Nt_array_ptr<char> buf = str_getbuf(&p_sess->ftp_arg_str);
+    unsigned int buf_len =str_getlen(&p_sess->ftp_arg_str);
+    _Nt_array_ptr<char> buf_wide : count(buf_len) = 0;
+    _Unchecked {
+      buf_wide = _Assume_bounds_cast<_Nt_array_ptr<char>>(buf, count(buf_len));
+    }
+    _Nt_array_ptr<char> buf_14 : count(14) = _Dynamic_bounds_cast<_Nt_array_ptr<char>>(buf_wide, count(14));
+    modtime = vsf_sysutil_parse_time(buf_14);
     str_copy(&p_sess->ftp_arg_str, &s_filename_str);
   }
   resolve_tilde(&p_sess->ftp_arg_str, p_sess);

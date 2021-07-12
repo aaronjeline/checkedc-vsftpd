@@ -160,7 +160,7 @@ str_next_dirent(struct mystr *p_filename_str : itype(_Ptr<struct mystr>), struct
 int
 str_readlink(struct mystr *p_str : itype(_Ptr<struct mystr>), const struct mystr *p_filename_str : itype(_Ptr<const struct mystr>))
 {
-  static _Nt_array_ptr<char> p_readlink_buf = 0;
+  static _Nt_array_ptr<char> p_readlink_buf : count(VSFTP_PATH_MAX) = 0;
   int retval;
   if (p_readlink_buf == 0)
   {

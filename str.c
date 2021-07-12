@@ -121,12 +121,14 @@ const char *str_strdup(const struct mystr *p_str : itype(_Ptr<const struct mystr
 const char *str_strdup_trimmed(const struct mystr *p_str : itype(_Ptr<const struct mystr>)) : itype(_Nt_array_ptr<const char>)
 {
   _Nt_array_ptr<const char> p_trimmed : count(p_str->len) = str_getbuf(p_str);
-  int h, t, newlen;
+  int h, t;
+  unsigned int newlen;
 
   for (h = 0; h < (int)str_getlen(p_str) && vsf_sysutil_isspace(p_trimmed[h]); h++) ;
   for (t = str_getlen(p_str) - 1; t >= 0 && vsf_sysutil_isspace(p_trimmed[t]); t--) ;
   newlen = t - h + 1;
-  return newlen ? ((_Nt_array_ptr<char> )vsf_sysutil_strndup(p_trimmed+h, (unsigned int)newlen)) : 0L;
+  _Nt_array_ptr<char> trimmed_offset : count(newlen) = _Dynamic_bounds_cast<_Nt_array_ptr<char>>(p_trimmed + h, count(newlen));
+  return newlen ? ((_Nt_array_ptr<char> )vsf_sysutil_strndup(trimmed_offset, (unsigned int)newlen)) : 0L;
 }
 
 void
