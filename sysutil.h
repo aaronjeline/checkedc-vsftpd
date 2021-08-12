@@ -97,13 +97,12 @@ void vsf_sysutil_ftruncate(int fd);
 void vsf_sysutil_lseek_to(const int fd, filesize_t seek_pos);
 void vsf_sysutil_lseek_end(const int fd);
 filesize_t vsf_sysutil_get_file_offset(const int file_fd);
-_Itype_for_any(T) int vsf_sysutil_read(const int fd, void* p_buf : itype(_Array_ptr<T>) byte_count(size), const unsigned int size);
-_Itype_for_any(T) int vsf_sysutil_write(const int fd, const void* p_buf : itype(_Array_ptr<const T>) byte_count(size),
-                      const unsigned int size);
+int vsf_sysutil_read(const int fd, void* p_buf : itype(_Array_ptr<void>) byte_count(size), unsigned int size);
+_Itype_for_any(T) int vsf_sysutil_write(const int fd, const void* p_buf : itype(_Array_ptr<const T>) byte_count(size), unsigned int size);
 /* Reading and writing, with handling of interrupted system calls and partial
  * reads/writes. Slightly more usable than the standard UNIX API!
  */
-_Itype_for_any(T) int vsf_sysutil_read_loop(const int fd, void* p_buf : itype(_Array_ptr<T>) byte_count(size), unsigned int size);
+int vsf_sysutil_read_loop(const int fd, void* p_buf : itype(_Array_ptr<void>) byte_count(size), unsigned int size);
 _Itype_for_any(T) int vsf_sysutil_write_loop(const int fd, const void* p_buf : itype(_Array_ptr<const T>) byte_count(size), unsigned int size);
 
 struct vsf_sysutil_statbuf;
@@ -153,8 +152,6 @@ _Itype_for_any(T) void vsf_sysutil_memunmap(void* p_start : itype(_Array_ptr<T>)
 _Itype_for_any(T) void* vsf_sysutil_malloc(unsigned int size) : itype(_Array_ptr<T>) byte_count(size);
 _Itype_for_any(T) void* vsf_sysutil_realloc(void* p_ptr : itype(_Array_ptr<T>) byte_count(0), unsigned int size) : itype(_Array_ptr<T>) byte_count(size);
 _Itype_for_any(T) void vsf_sysutil_free(void* p_ptr : itype(_Array_ptr<T>) byte_count(0));
-_Itype_for_any(T) void vsf_sysutil_free_ptr(void *p_ptr : itype(_Ptr<T>));
-
 
 /* Process creation/exit/process handling */
 unsigned int vsf_sysutil_getpid(void);

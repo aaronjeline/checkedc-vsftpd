@@ -121,7 +121,7 @@ priv_sock_recv_buf(int fd, char *p_buf : itype(_Array_ptr<char>) byte_count(len)
   if (recv_len > 0)
   {
     _Array_ptr<char> tmp_buf : byte_count(recv_len) = _Dynamic_bounds_cast<_Array_ptr<char>>(p_buf, byte_count(recv_len));
-    if (vsf_sysutil_read_loop<char>(fd, tmp_buf, recv_len) != (int) recv_len)
+    if (vsf_sysutil_read_loop(fd, tmp_buf, recv_len) != (int) recv_len)
     {
       die("priv_sock_recv_buf");
     }
@@ -132,7 +132,7 @@ char
 priv_sock_get_result(int fd)
 {
   char res;
-  int retval = vsf_sysutil_read_loop<char>(fd, &res, sizeof(res));
+  int retval = vsf_sysutil_read_loop(fd, &res, sizeof(res));
   if (retval != sizeof(res))
   {
     die("priv_sock_get_result");
@@ -144,7 +144,7 @@ char
 priv_sock_get_cmd(int fd)
 {
   char res;
-  int retval = vsf_sysutil_read_loop<char>(fd, &res, sizeof(res));
+  int retval = vsf_sysutil_read_loop(fd, &res, sizeof(res));
   if (retval != sizeof(res))
   {
     die("priv_sock_get_cmd");
@@ -207,7 +207,7 @@ int
 priv_sock_get_int(int fd)
 {
   int the_int;
-  int retval = vsf_sysutil_read_loop<int>(fd, &the_int, sizeof(the_int));
+  int retval = vsf_sysutil_read_loop(fd, &the_int, sizeof(the_int));
   if (retval != sizeof(the_int))
   {
     die("priv_sock_get_int");

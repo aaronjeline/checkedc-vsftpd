@@ -98,19 +98,21 @@ main(int argc, const char **argv : itype(_Array_ptr<_Nt_array_ptr<const char>>) 
     }
     else if (*p_arg)
     {
+      _Where p_arg : count(1);
       if (p_arg[1] == 'v')
       {
         vsf_exit("vsftpd: version " VSF_VERSION "\n");
       }
       else if (*(p_arg + 1) && p_arg[1] == 'o')
       {
-        _Nt_array_ptr<char> p_arg_tmp = _Dynamic_bounds_cast<_Nt_array_ptr<char>>(p_arg + 2, count(0));
+        _Where p_arg : count(2);
+        _Nt_array_ptr<const char> p_arg_tmp : bounds(p_arg + 2, p_arg + 2) = (p_arg + 2);
+        _Where p_arg_tmp : count(0);
         vsf_parseconf_load_setting(p_arg_tmp, 1);
       }
       else
       {
-        _Nt_array_ptr<char> p_arg_tmp = _Dynamic_bounds_cast<_Nt_array_ptr<char>>(p_arg, count(0));
-        die2("unrecognise option: ", p_arg_tmp);
+        die2("unrecognise option: ", p_arg);
       }
     }
   }
@@ -122,7 +124,7 @@ main(int argc, const char **argv : itype(_Array_ptr<_Nt_array_ptr<const char>>) 
     {
       vsf_parseconf_load_file(VSFTP_DEFAULT_CONFIG, 1);
     }
-    vsf_sysutil_free_ptr<struct vsf_sysutil_statbuf>(p_statbuf);
+    vsf_sysutil_free<struct vsf_sysutil_statbuf>(p_statbuf);
   }
   /* Resolve pasv_address if required */
   if (tunable_pasv_address && tunable_pasv_addr_resolve)
@@ -135,7 +137,7 @@ main(int argc, const char **argv : itype(_Array_ptr<_Nt_array_ptr<const char>>) 
     // Bounds cast added durring porting to allow for itype on tunabel_pasv_address.
     // This can be removed once vsf_sysutil_strdup has a checked type in pre-conversion code.
     tunable_pasv_address = vsf_sysutil_strdup(p_numeric_addr);
-    vsf_sysutil_free_ptr<struct vsf_sysutil_sockaddr>(p_addr);
+    vsf_sysutil_free<struct vsf_sysutil_sockaddr>(p_addr);
   }
   if (!tunable_run_as_launching_user)
   {
@@ -281,7 +283,7 @@ do_sanity_checks(void)
     {
       die("vsftpd: not configured for standalone, must be started from inetd");
     }
-    vsf_sysutil_free_ptr<struct vsf_sysutil_statbuf>(p_statbuf);
+    vsf_sysutil_free<struct vsf_sysutil_statbuf>(p_statbuf);
   }
   if (tunable_one_process_model)
   {

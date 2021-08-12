@@ -355,7 +355,7 @@ vsf_sysutil_clear_alarm(void)
 }
 
 int
-vsf_sysutil_read(const int fd, void* p_buf, const unsigned int size)
+vsf_sysutil_read(const int fd, void* p_buf, unsigned int size)
 {
   while (1)
   {
@@ -371,7 +371,7 @@ vsf_sysutil_read(const int fd, void* p_buf, const unsigned int size)
 }
 
 int
-vsf_sysutil_write(const int fd, const void* p_buf, const unsigned int size)
+vsf_sysutil_write(const int fd, const void* p_buf, unsigned int size)
 {
   while (1)
   {
@@ -389,16 +389,21 @@ vsf_sysutil_write(const int fd, const void* p_buf, const unsigned int size)
 int
 vsf_sysutil_read_loop(const int fd, void* p_buf, unsigned int size_bound)
 {
-  unsigned int size = size_bound;
-  int retval;
-  int num_read = 0;
+  size_t size = size_bound;
+  size_t retval;
+  size_t num_read = 0;
   if (size > INT_MAX)
   {
     die("size too big in vsf_sysutil_read_loop");
   }
   while (1)
   {
-    retval = vsf_sysutil_read<char>(fd, (_Array_ptr<char>)p_buf + num_read, size);
+    {
+      _Array_ptr<void> buf_tmp : byte_count(size + num_read) = _Dynamic_bounds_cast<_Array_ptr<void>>(p_buf, byte_count(size + num_read));
+      _Array_ptr<char> char_buf : byte_count(size + num_read) = buf_tmp;
+      _Array_ptr<char> char_buf_tmp : byte_count(size) = _Dynamic_bounds_cast<_Array_ptr<char>>(char_buf + num_read, byte_count(size));
+      retval = vsf_sysutil_read(fd, char_buf_tmp, size);
+    }
     if (retval < 0)
     {
       return retval;
@@ -539,13 +544,6 @@ vsf_sysutil_free(void* p_ptr : itype(_Array_ptr<T>) byte_count(0))
     bug("vsf_sysutil_free got a null pointer");
   }
   free<T>(p_ptr);
-}
-
-_Itype_for_any(T) void
-vsf_sysutil_free_ptr(void *p_ptr : itype(_Ptr<T>))
-{
-  _Array_ptr<T> tmp : byte_count(0) = _Dynamic_bounds_cast<_Array_ptr<T>>(p_ptr, byte_count(0));
-  vsf_sysutil_free<T>(tmp);
 }
 
 unsigned int
@@ -1152,8 +1150,15 @@ vsf_sysutil_strndup(const char *p_str : itype(_Array_ptr<const char>) count(p_le
 _Itype_for_any(T) void
 vsf_sysutil_memclr(void* p_dest : itype(_Array_ptr<T>) byte_count(size), unsigned int size)
 {
+  // Woraround for assert fail on dynamic cast of _Array_ptr<T>
+  _Array_ptr<void> workaround : byte_count(size) = 0;
+  _Unchecked {
+    void *tmp = p_dest;
+    workaround = _Assume_bounds_cast<_Array_ptr<void>>(tmp, byte_count(size));
+  }
+  // memcpy expects size as size_t, so some dynamic casting is requried
   size_t size_cpy = size;
-  _Array_ptr<T> dst_cpy : byte_count(size_cpy) = _Dynamic_bounds_cast<_Array_ptr<T>>(p_dest, byte_count(size_cpy));
+  _Array_ptr<void> dst_cpy : byte_count(size_cpy) = _Dynamic_bounds_cast<_Array_ptr<void>>(workaround, byte_count(size_cpy));
   /* Safety */
   if (size_cpy == 0)
   {
@@ -1165,9 +1170,21 @@ vsf_sysutil_memclr(void* p_dest : itype(_Array_ptr<T>) byte_count(size), unsigne
 _Itype_for_any(T) void
 vsf_sysutil_memcpy(void* p_dest : itype(_Array_ptr<T>) byte_count(size), const void* p_src : itype(_Array_ptr<T>) byte_count(size), const unsigned int size)
 {
+  // Woraround for assert fail on dynamic cast of _Array_ptr<T>
+  _Array_ptr<void> dst_workaround : byte_count(size) = 0;
+  _Unchecked {
+    void *tmp = p_dest;
+    dst_workaround = _Assume_bounds_cast<_Array_ptr<void>>(tmp, byte_count(size));
+  }
+  _Array_ptr<void> src_workaround : byte_count(size) = 0;
+  _Unchecked {
+    void *tmp = p_src;
+    src_workaround = _Assume_bounds_cast<_Array_ptr<void>>(tmp, byte_count(size));
+  }
+
   size_t size_cpy = size;
-  _Array_ptr<T> dst_cpy : byte_count(size_cpy) = _Dynamic_bounds_cast<_Array_ptr<T>>(p_dest, byte_count(size_cpy));
-  _Array_ptr<T> src_cpy : byte_count(size_cpy) = _Dynamic_bounds_cast<_Array_ptr<T>>(p_src, byte_count(size_cpy));
+  _Array_ptr<void> dst_cpy : byte_count(size_cpy) = _Dynamic_bounds_cast<_Array_ptr<void>>(dst_workaround, byte_count(size_cpy));
+  _Array_ptr<void> src_cpy : byte_count(size_cpy) = _Dynamic_bounds_cast<_Array_ptr<void>>(src_workaround, byte_count(size_cpy));
 
   /* Safety */
   if (size_cpy == 0)
@@ -1200,9 +1217,21 @@ vsf_sysutil_strcpy(char *p_dest : itype(_Array_ptr<char>) count(maxsize), const 
 _Itype_for_any(T) int
 vsf_sysutil_memcmp(const void* p_src1 : itype(_Array_ptr<const T>) byte_count(size) , const void* p_src2 : itype(_Array_ptr<const T>) byte_count(size), unsigned int size)
 {
+  // Woraround for assert fail on dynamic cast of _Array_ptr<T>
+  _Array_ptr<void> workaround1 : byte_count(size) = 0;
+  _Unchecked {
+    void *tmp = p_src1;
+    workaround1 = _Assume_bounds_cast<_Array_ptr<void>>(tmp, byte_count(size));
+  }
+  _Array_ptr<void> workaround2 : byte_count(size) = 0;
+  _Unchecked {
+    void *tmp = p_src2;
+    workaround2 = _Assume_bounds_cast<_Array_ptr<void>>(tmp, byte_count(size));
+  }
+
   size_t size_cpy = size;
-  _Array_ptr<T> src_cpy1 : byte_count(size_cpy) = _Dynamic_bounds_cast<_Array_ptr<T>>(p_src1, byte_count(size_cpy));
-  _Array_ptr<T> src_cpy2 : byte_count(size_cpy) = _Dynamic_bounds_cast<_Array_ptr<T>>(p_src2, byte_count(size_cpy));
+  _Array_ptr<void> src_cpy1 : byte_count(size_cpy) = _Dynamic_bounds_cast<_Array_ptr<void>>(workaround1, byte_count(size_cpy));
+  _Array_ptr<void> src_cpy2 : byte_count(size_cpy) = _Dynamic_bounds_cast<_Array_ptr<void>>(workaround2, byte_count(size_cpy));
 
   /* Safety */
   if (size_cpy == 0)
@@ -1210,6 +1239,7 @@ vsf_sysutil_memcmp(const void* p_src1 : itype(_Array_ptr<const T>) byte_count(si
     return 0;
   }
   return memcmp(src_cpy1, src_cpy2, size_cpy);
+  return 0;
 }
 
 int

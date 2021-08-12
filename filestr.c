@@ -44,7 +44,7 @@ str_fileread(struct mystr *p_str : itype(_Ptr<struct mystr>), const char *p_file
     sec_buf.size = secbuf_size, sec_buf.map_offset = 0, sec_buf.p_ptr = 0, sec_buf.noaccess_page = 0;
     vsf_secbuf_alloc(&sec_buf);
 
-    retval = vsf_sysutil_read_loop<char>(fd, sec_buf.p_ptr, (unsigned int) sec_buf.size);
+    retval = vsf_sysutil_read_loop(fd, sec_buf.p_ptr, (unsigned int) sec_buf.size);
     if (vsf_sysutil_retval_is_error(retval))
     {
       goto free_out;
@@ -56,7 +56,7 @@ str_fileread(struct mystr *p_str : itype(_Ptr<struct mystr>), const char *p_file
     str_alloc_memchunk(p_str, sec_buf.p_ptr, (unsigned int) sec_buf.size);
   }
 free_out:
-  vsf_sysutil_free_ptr<struct vsf_sysutil_statbuf>(p_stat);
+  vsf_sysutil_free<struct vsf_sysutil_statbuf>(p_stat);
   vsf_secbuf_free(&sec_buf);
   vsf_sysutil_close(fd);
   return retval;

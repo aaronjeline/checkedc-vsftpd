@@ -98,7 +98,7 @@ vsf_standalone_main(void)
       }
     }
     retval = vsf_sysutil_bind(listen_sock, p_sockaddr);
-    vsf_sysutil_free_ptr<struct vsf_sysutil_sockaddr>(p_sockaddr);
+    vsf_sysutil_free<struct vsf_sysutil_sockaddr>(p_sockaddr);
     if (vsf_sysutil_retval_is_error(retval))
     {
       die("could not bind listening IPv4 socket");
@@ -140,7 +140,7 @@ vsf_standalone_main(void)
       vsf_sysutil_sockaddr_set_ipv6scope(p_sockaddr, if_index);
     }
     retval = vsf_sysutil_bind(listen_sock, p_sockaddr);
-    vsf_sysutil_free_ptr<struct vsf_sysutil_sockaddr>(p_sockaddr);
+    vsf_sysutil_free<struct vsf_sysutil_sockaddr>(p_sockaddr);
     if (vsf_sysutil_retval_is_error(retval))
     {
       die("could not bind listening IPv6 socket");

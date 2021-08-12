@@ -839,7 +839,7 @@ static int do_sendfile(const int out_fd, const int in_fd,
       num_read_this_time = num_send;
     }
     _Array_ptr<char> p_recvbuf_num_read_this_time : count(num_read_this_time) = _Dynamic_bounds_cast<_Array_ptr<char>>(p_recvbuf, count(num_read_this_time));
-    retval = vsf_sysutil_read<char>(in_fd, p_recvbuf_num_read_this_time, num_read_this_time);
+    retval = vsf_sysutil_read(in_fd, p_recvbuf_num_read_this_time, num_read_this_time);
     if (retval < 0)
     {
       return retval;
@@ -938,7 +938,6 @@ void
 vsf_sysutil_setproctitle_init(int argc, const char **argv : itype(_Array_ptr<_Nt_array_ptr<const char>>) count(argc))
 {
   int i;
-  _Nt_array_ptr<_Nt_array_ptr<char>> p_env = environ;
 
   if (s_proctitle_inited)
   {
@@ -957,14 +956,16 @@ vsf_sysutil_setproctitle_init(int argc, const char **argv : itype(_Array_ptr<_Nt
       argv[i] = 0;
     }
   }
-  while (*p_env != 0)
-  {
-    s_proctitle_space += vsf_sysutil_strlen(*p_env) + 1;
-    p_env++;
-  }
-  /* Oops :-) */
-  environ = 0;
+
   _Unchecked {
+    char **p_env = environ;
+    while (*p_env != 0)
+    {
+      s_proctitle_space += vsf_sysutil_strlen(*p_env) + 1;
+      p_env++;
+    }
+    /* Oops :-) */
+    environ = 0;
     // It looks like this assumes that command line arguments and environment
     // variables are stored in a continuous block of memory. I think that's a
     // valid assumption, but I don't know how I can inform Checked C about it.

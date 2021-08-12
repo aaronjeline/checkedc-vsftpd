@@ -58,8 +58,7 @@ str_read_loop(struct mystr *p_str : itype(_Ptr<struct mystr>), const int fd)
 {
   unsigned int len = str_getlen(p_str);
   _Nt_array_ptr<char> buf : count(len) = _Dynamic_bounds_cast<_Nt_array_ptr<char>>(str_getbuf(p_str), count(len));
-  return vsf_sysutil_read_loop<char>(
-    fd, buf, len);
+  return vsf_sysutil_read_loop(fd, buf, len);
 }
 
 int

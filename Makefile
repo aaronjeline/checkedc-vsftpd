@@ -2,11 +2,12 @@
 CC 	=	clang
 INSTALL	=	install
 IFLAGS  = -idirafter dummyinc
-CFLAGS	=	-O2 -fPIE -fstack-protector --param=ssp-buffer-size=4 \
+CFLAGS_NO_WERROR = -g -O0 -fPIE -fstack-protector --param=ssp-buffer-size=4 \
 	-Wall -W -Wshadow -Wformat-security \
 	-Wno-incompatible-pointer-types-discards-qualifiers \
 	-Wno-enum-conversion \
 	#-pedantic -Wconversion
+CFLAGS = $(CFLAGS_NO_WERROR) -Werror
 
 LIBS	=	`./vsf_findlibs.sh`
 LINK	=	-Wl
@@ -21,12 +22,15 @@ OBJS	=	main.o utility.o prelogin.o ftpcmdio.o postlogin.o privsock.o \
     ssl.o sslslave.o ptracesandbox.o ftppolicy.o sysutil.o sysdeputil.o \
     seccompsandbox.o
 
-
 .c.o:
 	$(CC) -c $*.c $(CFLAGS) $(IFLAGS)
 
 vsftpd: $(OBJS) 
 	$(CC) -g -o vsftpd $(OBJS) $(LINK) $(LDFLAGS) $(LIBS)
+
+# No -Werror passed so that sysutil.c is allowed to build with warnings
+sysutil.o: sysutil.c
+	$(CC) -c $(CFLAGS_NO_WERROR) sysutil.c
 
 install:
 	if [ -x /usr/local/sbin ]; then \

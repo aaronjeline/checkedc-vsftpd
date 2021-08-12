@@ -485,7 +485,7 @@ do_file_send_rwloop(struct vsf_session *p_sess : itype(_Ptr<struct vsf_session>)
   {
     unsigned int num_to_write;
     _Array_ptr<char> read_tmp : count(chunk_size) = _Dynamic_bounds_cast<_Array_ptr<char>>(p_readbuf, count(chunk_size));
-    unsigned int retval = vsf_sysutil_read<char>(file_fd, read_tmp, chunk_size);
+    unsigned int retval = vsf_sysutil_read(file_fd, read_tmp, chunk_size);
     if (vsf_sysutil_retval_is_error(retval))
     {
       ret_struct.retval = -1;

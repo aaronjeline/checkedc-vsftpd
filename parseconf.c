@@ -243,7 +243,7 @@ vsf_parseconf_load_file(const char *p_filename : itype(_Nt_array_ptr<const char>
     {
       die("config file not owned by correct user, or not a file");
     }
-    vsf_sysutil_free_ptr<struct vsf_sysutil_statbuf>(p_statbuf);
+    vsf_sysutil_free<struct vsf_sysutil_statbuf>(p_statbuf);
   }
   while (str_getline(&config_file_str, &config_setting_str, &str_pos))
   {
