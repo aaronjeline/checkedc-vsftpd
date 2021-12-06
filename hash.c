@@ -48,7 +48,7 @@ hash_lookup_entry(struct hash *p_hash : itype(_Ptr<struct hash>), void* p_key : 
   {
     return 0;
   }
-  return p_node->p_value;
+  return _Dynamic_bounds_cast<_Array_ptr<void>>(p_node->p_value, byte_count(p_hash->value_size));
 }
 
 void

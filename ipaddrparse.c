@@ -54,7 +54,7 @@ vsf_sysutil_parse_ipv6(const struct mystr *p_str : itype(_Ptr<const struct mystr
     }
     str_append_str(&s_ret, &s_rhs_ret);
   }
-  return (_Nt_array_ptr<const unsigned char>) str_getbuf(&s_ret);
+  return _Dynamic_bounds_cast<_Nt_array_ptr<const unsigned char>>(str_getbuf(&s_ret), count(sizeof(struct in6_addr)));
 }
 
 const unsigned char *vsf_sysutil_parse_ipv4(const struct mystr *p_str : itype(_Ptr<const struct mystr>)) : itype(_Array_ptr<const unsigned char>) count(sizeof(struct in_addr))

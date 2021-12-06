@@ -2061,7 +2061,8 @@ void
 vsf_sysutil_sockaddr_alloc(struct vsf_sysutil_sockaddr **p_sockptr : itype(_Ptr<_Ptr<struct vsf_sysutil_sockaddr>>))
 {
   vsf_sysutil_sockaddr_clear(p_sockptr);
-  *p_sockptr = vsf_sysutil_malloc<struct vsf_sysutil_sockaddr>(sizeof(**p_sockptr));
+  _Ptr<struct vsf_sysutil_sockaddr> tmp = vsf_sysutil_malloc<struct vsf_sysutil_sockaddr>(sizeof(**p_sockptr));
+  *p_sockptr = tmp;
   vsf_sysutil_memclr<struct vsf_sysutil_sockaddr>(*p_sockptr, sizeof(**p_sockptr));
 }
 
@@ -2232,7 +2233,7 @@ vsf_sysutil_sockaddr_ipv6_v4(const struct vsf_sysutil_sockaddr *p_addr : itype(_
     return 0;
   }
   p_addr_start = (_Array_ptr<const unsigned char>)&p_addr->u.u_sockaddr_in6.sin6_addr;
-  return &p_addr_start[12];
+  return _Dynamic_bounds_cast<_Array_ptr<const unsigned char>>(p_addr_start + 12, byte_count(4));
 }
 
 const void*
@@ -2251,8 +2252,10 @@ void*
 vsf_sysutil_sockaddr_get_raw_addr(struct vsf_sysutil_sockaddr *p_sockptr : itype(_Ptr<struct vsf_sysutil_sockaddr>)) : itype(_Array_ptr<void>) byte_count(sizeof(p_sockptr->u.u_sockaddr_in6.sin6_addr))
 {
   if (p_sockptr->u.u_sockaddr.sa_family == AF_INET)
-  {
-    return &p_sockptr->u.u_sockaddr_in.sin_addr;
+  _Unchecked {
+    // IIRC, sin_addr and sin6_addr are members of the same union, so at least
+    // this much memory should be allocated, even if we shouldn't read from it.
+    return _Assume_bounds_cast<_Array_ptr<void>>(&p_sockptr->u.u_sockaddr_in.sin_addr, byte_count(sizeof(p_sockptr->u.u_sockaddr_in6.sin6_addr)));
   }
   else if (p_sockptr->u.u_sockaddr.sa_family == AF_INET6)
   {

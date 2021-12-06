@@ -1040,7 +1040,7 @@ vsf_sysutil_map_anon_pages(unsigned int length) : itype(_Array_ptr<T>) byte_coun
   {
     die("mmap");
   }
-  return retval;
+  return _Dynamic_bounds_cast<_Array_ptr<T>>(retval, byte_count(length));
 }
 #else /* VSF_SYSDEP_HAVE_MAP_ANON */
 void
