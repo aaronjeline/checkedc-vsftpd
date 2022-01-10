@@ -19,8 +19,7 @@ void vsf_cmdio_sock_setup(void);
  * status       - the status code to report
  * p_text       - the text to report
  */
-void vsf_cmdio_write(struct vsf_session* p_sess : itype(_Ptr<struct vsf_session>), int status,
-                     const char* p_text : itype(_Nt_array_ptr<const char>));
+void vsf_cmdio_write(struct vsf_session *p_sess : itype(_Ptr<struct vsf_session>), int status, const char *p_text : itype(_Nt_array_ptr<const char>));
 
 /* vsf_cmdio_write_hyphen()
  * PURPOSE
@@ -31,8 +30,7 @@ void vsf_cmdio_write(struct vsf_session* p_sess : itype(_Ptr<struct vsf_session>
  * status       - the status code to report
  * p_text       - the text to report
  */
-void vsf_cmdio_write_hyphen(struct vsf_session* p_sess : itype(_Ptr<struct vsf_session>), int status,
-                            const char* p_text : itype(_Nt_array_ptr<const char>));
+void vsf_cmdio_write_hyphen(struct vsf_session *p_sess : itype(_Ptr<struct vsf_session>), int status, const char *p_text : itype(_Nt_array_ptr<const char>));
 
 /* vsf_cmdio_write_raw()
  * PURPOSE
@@ -43,23 +41,21 @@ void vsf_cmdio_write_hyphen(struct vsf_session* p_sess : itype(_Ptr<struct vsf_s
  * p_sess       - the current session object
  * p_text       - the text to report
  */
-void vsf_cmdio_write_raw(struct vsf_session* p_sess : itype(_Ptr<struct vsf_session>), const char* p_text : itype(_Nt_array_ptr<const char>));
+void vsf_cmdio_write_raw(struct vsf_session *p_sess : itype(_Ptr<struct vsf_session>), const char *p_text : itype(_Nt_array_ptr<const char>));
 
 /* vsf_cmdio_write_exit()
  * PURPOSE
  * The same as vsf_cmdio_write(), and then the calling process is exited. The
  * write is _guaranteed_ to not block (ditching output if neccessary).
  */
-void vsf_cmdio_write_exit(struct vsf_session* p_sess, int status,
-                          const char* p_text, int exit_val);
+void vsf_cmdio_write_exit(struct vsf_session *p_sess : itype(_Ptr<struct vsf_session>), int status, const char *p_text : itype(_Nt_array_ptr<const char>), int exit_val);
 
 /* vsf_cmdio_write_str()
  * PURPOSE
  * The same as vsf_cmdio_write(), apart from the text is specified as a
  * string buffer object "p_str".
  */
-void vsf_cmdio_write_str(struct vsf_session* p_sess, int status,
-                         const struct mystr* p_str);
+void vsf_cmdio_write_str(struct vsf_session *p_sess : itype(_Ptr<struct vsf_session>), int status, const struct mystr *p_str : itype(_Ptr<const struct mystr>));
 
 /* vsf_cmdio_write_str_hyphen()
  * PURPOSE
@@ -67,8 +63,7 @@ void vsf_cmdio_write_str(struct vsf_session* p_sess, int status,
  * output with the continuation indicator '-' between the response code and
  * the response text. This indicates there are more lines of response.
  */
-void vsf_cmdio_write_str_hyphen(struct vsf_session* p_sess : itype(_Ptr<struct vsf_session>), int status,
-                                const struct mystr* p_str : itype(_Ptr<const struct mystr>));
+void vsf_cmdio_write_str_hyphen(struct vsf_session *p_sess : itype(_Ptr<struct vsf_session>), int status, const struct mystr *p_str : itype(_Ptr<const struct mystr>));
 
 /* vsf_cmdio_set_alarm()
  * PURPOSE
@@ -78,7 +73,7 @@ void vsf_cmdio_write_str_hyphen(struct vsf_session* p_sess : itype(_Ptr<struct v
  * PARAMETERS
  * p_sess       - The current session object
  */
-void vsf_cmdio_set_alarm(struct vsf_session* p_sess);
+void vsf_cmdio_set_alarm(struct vsf_session *p_sess : itype(_Ptr<struct vsf_session>));
 
 /* vsf_cmdio_get_cmd_and_arg()
  * PURPOSE
@@ -89,9 +84,7 @@ void vsf_cmdio_set_alarm(struct vsf_session* p_sess);
  * p_arg_str    - Where to put the FTP argument string (may be empty)
  * set_alarm    - If true, the control connection inactivity monitor is used
  */
-void vsf_cmdio_get_cmd_and_arg(struct vsf_session* p_sess,
-                               struct mystr* p_cmd_str,
-                               struct mystr* p_arg_str, int set_alarm);
+void vsf_cmdio_get_cmd_and_arg(struct vsf_session *p_sess : itype(_Ptr<struct vsf_session>), struct mystr *p_cmd_str : itype(_Ptr<struct mystr>), struct mystr *p_arg_str : itype(_Ptr<struct mystr>), int set_alarm);
 
 #endif /* VSF_FTPCMDIO_H */
 

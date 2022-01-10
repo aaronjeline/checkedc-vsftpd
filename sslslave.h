@@ -11,7 +11,7 @@ struct vsf_session;
  * PARAMETERS
  * p_sess       - the session object
  */
-void ssl_slave(struct vsf_session* p_sess);
+void ssl_slave(struct vsf_session *p_sess : itype(_Ptr<struct vsf_session>));
 
 #endif /* VSF_SSLSLAVE_H */
 
