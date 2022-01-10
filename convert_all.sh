@@ -1,5 +1,6 @@
 #!/bin/bash
 3c \
+-itypes-for-extern \
 -alltypes \
 -dump-stats \
 -p \
